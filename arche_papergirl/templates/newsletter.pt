@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      i18n:domain="arche_papergirl">
+<body>
+<div metal:fill-slot="main-content">
+  <!--
+  <img tal:replace="structure view.thumb_tag(context, 'col-2', extra_cls = 'pull-right')" />
+  -->
+  <h1>${context.title}</h1>
+
+  <div class="list-group">
+    <div class="list-group-item" tal:repeat="obj sections">
+      <div class="dropdown pull-right">
+        <a href="${request.resource_url(obj, 'edit')}"
+           class="btn btn-default"
+           title="Edit"
+           i18n:attributes="title;">
+          <span class="glyphicon glyphicon-edit"></span>
+        </a>
+        <a class="btn btn-default dropdown-toggle"
+                 id="dropdownMenu-${obj.uid}" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">
+          <span class="glyphicon glyphicon-cog"></span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${obj.uid}">
+          <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
+          <!--
+          <li role="separator" class="divider"></li>
+          <li><a href="#">Separated link</a></li>
+          -->
+        </ul>
+      </div>
+      <h3 tal:condition="obj.title" class="media-heading">${obj.title}</h3>
+      <h3 tal:condition="not obj.title"
+          class="text-muted media-heading"
+          i18n:translate="">(None)</h3>
+      <div tal:condition="obj.body">${structure: obj.body}</div>
+      <div tal:condition="not obj.body"
+           class="text-muted"
+           i18n:translate="">No text yet...</div>
+    </div>
+  </div>
+
+  <p>
+    <a href="${request.resource_url(context, 'add', query = {'content_type': 'NewsletterSection'})}"
+      class="btn btn-success">
+      <span class="glyphicon glyphicon-plus"></span>
+      <span i18n:translate="">New section</span>
+    </a>
+  </p>
+
+  <ul class="nav nav-pills">
+    <li class="active">
+      <a href="#status_tab" data-toggle="tab" i18n:translate="">Status</a>
+    </li>
+    <li>
+      <a href="#test_tab" data-toggle="tab" i18n:translate="">Test</a>
+    </li>
+    <li>
+      <a href="#send_tab" data-toggle="tab">Send</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div class="tab-pane active" id="status_tab">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          STATUS... FIXME
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="test_tab">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          ${structure: send_single_form}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="send_tab">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          ${structure: send_to_list_form}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
