@@ -1,0 +1,14 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="arche_papergirl">
+<h3 i18n:translate="">Unsubscribe...</h3>
+<p i18n:translate="xxx">
+
+</p>
+<p>
+  <a href="${url}">${url}</a>
+</p>
+<tal:footer replace="structure view.render_template('arche:templates/emails/footer.pt')"></tal:footer>
+</tal:main>

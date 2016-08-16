@@ -52,6 +52,7 @@
     </a>
   </p>
 
+
   <ul class="nav nav-pills">
     <li class="active">
       <a href="#status_tab" data-toggle="tab" i18n:translate="">Status</a>
