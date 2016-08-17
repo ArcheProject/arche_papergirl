@@ -22,9 +22,9 @@ $(function () {
 
 
 function update_progress(uid, curr_pending) {
-    var orig_value = parseInt($('[data-to-process-for="' + uid + '"]').html());
+    var orig_elem = $('[data-pending-for="' + uid + '"]');
+    var orig_value = parseInt(orig_elem.data('to-process'));
     var progress_elem = $('[data-progress-for="' + uid + '"]');
-    progress_elem.css({'width': Math.floor(((orig_value - curr_pending) / orig_value) * 100) + '%'})
-    $('[data-pending-for="' + uid + '"]').html(curr_pending);
+    progress_elem.css({'width': Math.floor(((orig_value - curr_pending) / orig_value) * 100) + '%'});
+    orig_elem.data('to-process', curr_pending);
 }
-

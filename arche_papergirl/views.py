@@ -15,11 +15,13 @@ from arche_papergirl.interfaces import IEmailList
 from arche_papergirl.interfaces import IListSubscriber
 from arche_papergirl.fanstatic_lib import paper_manage
 
+
 @view_defaults(context = INewsletter, permission = PERM_EDIT)
 class NewsletterView(BaseView):
 
     @view_config(name='view', renderer='arche_papergirl:templates/newsletter.pt')
     def view(self):
+        paper_manage.need()
         sections = [x for x in self.context.values() if INewsletterSection.providedBy(x)]
         single_form = SendSingleSubForm(self.context, self.request)()
         to_list_form = SendToListSubForm(self.context, self.request)()
@@ -32,15 +34,9 @@ class NewsletterView(BaseView):
                 'send_single_form': single_form['form'],
                 'send_to_list_form': to_list_form['form']}
 
-    @view_config(name = 'outbox', renderer='arche_papergirl:templates/outbox.pt')
-    def outbox(self):
-        paper_manage.need()
-        return {}
-
     @view_config(name = 'manual_send.json', renderer='json')
     def manual_send(self):
         email_list = self.request.resolve_uid( self.request.GET.get('list_uid', '') )
-        #subscriber_uid = self.context.pop_pending(email_list.uid)
         subscriber = self.context.process_next(self.request, email_list.uid)
         if not subscriber:
             #Nothing to do - status?
@@ -102,9 +98,11 @@ class SendToListSubForm(BaseForm):
     def send_to_list_success(self, appstruct):
         email_list = self.request.resolve_uid(appstruct['recipient_list'])
         self.context.add_to_list(email_list)
-        self.flash_messages.add(self.default_success, type='success')
+        msg = _("mail_queued_notice",
+                default="Mail added to queue")
+        self.flash_messages.add(msg, type='success')
         #FIXME: Figure out if a more sane mailer is installed?
-        return HTTPFound(location=self.request.resource_url(self.context, 'outbox'))
+        return HTTPFound(location=self.request.resource_url(self.context))
 
 
 @view_config(context = INewsletter,
