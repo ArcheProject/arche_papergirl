@@ -103,8 +103,6 @@
             </tal:defs>
           </tal:iter>
 
-
-
         </div>
       </div>
     </div>

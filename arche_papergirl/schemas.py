@@ -1,9 +1,16 @@
 import colander
 import deform
+from arche.interfaces import ISchemaCreatedEvent
+from arche.schemas import FinishRegistrationSchema
+from arche.schemas import UserSchema
 from arche.widgets import ReferenceWidget
+from pyramid.renderers import render
+from pyramid.traversal import find_interface
 
 from arche_papergirl import _
-from pyramid.renderers import render
+from arche_papergirl.interfaces import IEmailList
+from arche_papergirl.interfaces import IListSubscriber
+from arche_papergirl.models import get_email_lists
 
 
 class NewsletterSchema(colander.Schema):
@@ -55,28 +62,20 @@ def current_users_email(node, kw):
     request = kw['request']
     return getattr(request.profile, 'email', '')
 
-def _get_lists(context, request):
-    #FIXME
-    values = [('', _("<Select>"))]
-    query = "type_name == 'EmailList'"
-    docids = request.root.catalog.query(query)[1]
-    for obj in request.resolve_docids(docids):
-        title = "%s (%s)" % (obj.title, len(obj))
-        values.append((obj.uid, title))
-    return values
-
 @colander.deferred
 def pick_list_widget(node, kw):
-    context = kw['context']
     request = kw['request']
-    return deform.widget.RadioChoiceWidget(values = _get_lists(context, request))
+    values = []
+    for obj in get_email_lists(request):
+        title = "%s (%s)" % (obj.title, len(obj))
+        values.append((obj.uid, title,))
+    return deform.widget.RadioChoiceWidget(values=values)
 
 @colander.deferred
 def pick_list_validator(node, kw):
-    context = kw['context']
     request = kw['request']
-    values = [x[0] for x in _get_lists(context, request)]
-    return colander.OneOf(values)
+    return colander.OneOf([x.uid for x in get_email_lists(request)])
+
 
 class SendSingleRecipient(colander.Schema):
     email = colander.SchemaNode(
@@ -92,6 +91,7 @@ class SendSingleRecipient(colander.Schema):
         validator = pick_list_validator
     )
 
+
 class SendToList(colander.Schema):
     recipient_list = colander.SchemaNode(
         colander.String(),
@@ -104,13 +104,13 @@ class SendToList(colander.Schema):
 @colander.deferred
 def default_mail_template(node, kw):
     request = kw['request']
-    #context = kw['context']
     values = {}
     return render('arche_papergirl:templates/default_mail_template.txt', values, request=request)
 
 def mail_template_validator(node, kw):
+    #FIXME
     pass
-#FIXME
+
 
 class EmailListSchema(colander.Schema):
     title = colander.SchemaNode(
@@ -132,12 +132,32 @@ class EmailListSchema(colander.Schema):
     )
 
 
+@colander.deferred
+class UniqueSubscriberEmail(object):
+    """ Make sure an email is unique. If it's used on a ListSubscriber object,
+        it won't fail if the same address is used
+    """
+    def __init__(self, node, kw):
+        self.context = kw['context']
+
+    def __call__(self, node, value):
+        email_val = colander.Email()
+        email_val(node, value)
+        email_list = find_interface(self.context, IEmailList)
+        existing_mails = set([x for x in email_list.get_emails()])
+        if IListSubscriber.providedBy(self.context):
+            existing_mails.remove(self.context.email)
+        if value in existing_mails:
+            raise colander.Invalid(node, _("already_used_email_error",
+                                           default = "This address is already used."))
+
+
 class ListSubscriberSchema(colander.Schema):
     email = colander.SchemaNode(
         colander.String(),
         title = _("Email"),
-        validator = colander.Email()
-    ) #FIXME: Unique email
+        validator = UniqueSubscriberEmail,
+    )
     active = colander.SchemaNode(
         colander.Bool(),
         title = _("Active subscription?")
@@ -151,6 +171,35 @@ class RequestSubscriptionChangeSchema(colander.Schema):
         validator = colander.Email()
     )
 
+
+def _subscriber_subscribe_on_profile(schema, event):
+    valid_lists = []
+    for obj in get_email_lists(event.request):
+        if obj.subscribe_on_profile == True:
+            valid_lists.append(obj)
+
+    if not valid_lists:
+        return
+    values = [(obj.uid, obj.title) for obj in valid_lists]
+    schema.add(colander.SchemaNode(
+        colander.Set(),
+        name = '_email_list_subscriptions',
+        widget = deform.widget.CheckboxChoiceWidget(values = values)
+    ))
+
+
+def _list_option_for_profile(schema, event):
+
+    schema.add(colander.SchemaNode(
+        colander.Bool(),
+        name='subscribe_on_profile',
+        title = _("Show this list as a subscription option when a user registers or edits their profile?"),
+    ))
+
+def subscribe_on_profile(config):
+    config.add_subscriber(_subscriber_subscribe_on_profile, [FinishRegistrationSchema, ISchemaCreatedEvent])
+    config.add_subscriber(_subscriber_subscribe_on_profile, [UserSchema, ISchemaCreatedEvent])
+    config.add_subscriber(_list_option_for_profile, [EmailListSchema, ISchemaCreatedEvent])
 
 def includeme(config):
     config.add_content_schema('Newsletter', NewsletterSchema, ('add', 'edit'))

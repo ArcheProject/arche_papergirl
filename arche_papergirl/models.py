@@ -1,18 +1,22 @@
 import string
 from random import choice
 
-from arche.api import Content
+from BTrees.OOBTree import OOBTree
 from arche.api import Base
+from arche.api import Content
+from arche.interfaces import IObjectAddedEvent
+from arche.interfaces import IObjectUpdatedEvent
+from arche.interfaces import IUser
 from arche.utils import utcnow
 from chameleon.zpt.template import PageTemplate
+from pyramid.threadlocal import get_current_request
 from zope.interface import implementer
-from BTrees.OOBTree import OOBTree
 
+from arche_papergirl import _
 from arche_papergirl.interfaces import IEmailList
 from arche_papergirl.interfaces import IListSubscriber
 from arche_papergirl.interfaces import INewsletter
 from arche_papergirl.interfaces import INewsletterSection
-from arche_papergirl import _
 
 
 def _create_token():
@@ -71,6 +75,7 @@ class EmailList(Content):
     show_byline = False
     title = ""
     mail_template = ""
+    subscribe_on_profile = False
 
     def create_subscriber(self, email, subscribe_token=_create_token(), unsubscribe_token=_create_token()):
         if email in self.get_emails():
@@ -138,8 +143,73 @@ def render_newsletter(request, newsletter, subscriber, email_list, **kwargs):
     #FIXME: Encoding, translation?
     return page_tpl.render(**tpl_values)
 
+# def mock_nl_structure(request):
+#     """ Validators and tests will need semi-functioning lists and subscribers for tests.
+#     """
+#     cf = request.content_factories
+#     response = {}
+#     response['newsletter'] = cf['Newsletter'](title = "Hello world",
+#                                                          description = "How are you?")
+#     response['subscriber'] = cf['ListSubscriber'](email="jane_doe@betahaus.net",
+#                                               subscribe_token='sub_token',
+#                                               unsubscribe_token='unsub_token',
+#                                               active=True)
+
+def get_email_lists(request=None):
+    if request is None:
+        request = get_current_request()
+    query = "type_name == 'EmailList'"
+    docids = request.root.catalog.query(query)[1]
+    return request.resolve_docids(docids)
+
 def includeme(config):
     config.add_content_factory(Newsletter, addable_to = 'Root')
     config.add_content_factory(NewsletterSection, addable_to = 'Newsletter')
     config.add_content_factory(EmailList, addable_to = ('Root', 'Folder'))
     config.add_content_factory(ListSubscriber, addable_to = 'EmailList')
+
+def _get_valid_lists():
+    for obj in get_email_lists():
+        if obj.subscribe_on_profile:
+            yield obj
+
+def subscribe_on_profile(config):
+    from arche.api import User
+
+    #Subscriber for adjusting lists
+    config.add_subscriber(_update_lists_with_pending_profile_changes, [IUser, IObjectUpdatedEvent])
+    config.add_subscriber(_update_lists_with_pending_profile_changes, [IUser, IObjectAddedEvent])
+
+    #Add a proxy attribute to User that delegates settings to email lists
+    def _get_email_subscriptions(self):
+        found_lists = set()
+        if not self.email:
+            return found_lists
+        for obj in _get_valid_lists():
+            subscr = obj.find_subscriber(self.email)
+            if subscr != None and subscr.active == True:
+                found_lists.add(obj.uid)
+        return found_lists
+    def _set_email_subscriptions(self, value):
+        print "setting pending changes: ", value
+        self._pending_list_changes = set(value)
+    User._email_list_subscriptions = property(_get_email_subscriptions, _set_email_subscriptions)
+
+def _update_lists_with_pending_profile_changes(user, event):
+    if not user.email or not hasattr(user, '_pending_list_changes'):
+        return
+    if not getattr(event, 'changed', ()) or '_email_list_subscriptions' in event.changed:
+        pending_lists = user._pending_list_changes
+        for obj in _get_valid_lists():
+            subscr = obj.find_subscriber(user.email)
+            if subscr:
+                #Adjust existing
+                if subscr.active == False and obj.uid in pending_lists:
+                    subscr.set_active(True)
+                if subscr.active == True and obj.uid not in pending_lists:
+                    subscr.set_active(False)
+            elif obj.uid in pending_lists and subscr is None:
+                #Create subscriber
+                subscr = obj.create_subscriber(user.email)
+                subscr.set_active(True)
+        delattr(user, '_pending_list_changes')
