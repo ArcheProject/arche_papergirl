@@ -4,35 +4,16 @@ from __future__ import unicode_literals
 from datetime import datetime
 from unittest import TestCase
 
-from arche.testing import barebone_fixture
+from arche_papergirl.exceptions import AlreadyInQueueError
 from pyramid import testing
-from pyramid.renderers import render
 from zope.interface.verify import verifyClass, verifyObject
 
-from arche_papergirl.interfaces import INewsletter, IEmailList, IListSubscriber
-
-
-def _default_mail_tpl(request):
-    values = {'request': request}
-    return render('arche_papergirl:templates/default_mail_template.txt', values, request=request)
-
-def _fixture(config):
-    from arche_papergirl.models import EmailList
-    from arche_papergirl.models import ListSubscriber
-    from arche_papergirl.models import Newsletter
-    from arche_papergirl.models import NewsletterSection
-    root = barebone_fixture(config)
-    root['list'] = EmailList()
-    root['list']['subs'] = ListSubscriber(email="jane_doe@betahaus.net",
-                                          subscribe_token='sub_token',
-                                          unsubscribe_token='unsub_token',
-                                          active=True)
-    root['newsletter'] = nl = Newsletter(title = "Hello world", description = "How are you?")
-    nl['s1'] = NewsletterSection(title = "Ketchup",
-                                 body = "Is it <b>really</b> made of tomatoes?")
-    nl['s2'] = NewsletterSection(title = "åäö!?",
-                                 body = "Med svenska tecken: åäö")
-    return root
+from arche_papergirl.interfaces import INewsletter
+from arche_papergirl.interfaces import IEmailList
+from arche_papergirl.interfaces import IListSubscriber
+from arche_papergirl.interfaces import IListSubscribers
+from arche_papergirl.interfaces import IEmailListTemplate
+from arche_papergirl.testing import fixture
 
 
 class NewsletterTests(TestCase):
@@ -54,33 +35,30 @@ class NewsletterTests(TestCase):
     def test_verify_obj(self):
         self.failUnless(verifyObject(INewsletter, self._cut()))
 
-    def test_add_to_list(self):
-        root = _fixture(self.config)
-        obj = root['newsletter']
-        obj.add_to_list(root['list'])
-        email_list = root['list']
-        subscriber = root['list']['subs']
-        self.assertIn(email_list.uid, obj.pending)
-        self.assertIn(subscriber.uid, obj.pending[email_list.uid])
-        self.assertIsInstance(obj.pending[email_list.uid][subscriber.uid], datetime)
+    def test_add_queue(self):
+        obj = self._cut()
+        obj.add_queue('subscriber_uid', 'list_uid', 'tpl_uid')
+        self.assertEqual(obj._queue[1], ('subscriber_uid', 'list_uid', 'tpl_uid'))
+        self.assertEqual(obj._uid_to_status['subscriber_uid'], 1)
+        self.assertRaises(AlreadyInQueueError, obj.add_queue, 'subscriber_uid', 'list_uid', 'tpl_uid')
 
-    def test_process_next(self):
-        from pyramid.request import apply_request_extensions
-        self.config.include('arche.testing')
-        self.config.include('arche.testing.catalog')
-        root = _fixture(self.config)
-        obj = root['newsletter']
-        obj.add_to_list(root['list'])
-        email_list = root['list']
-        subscriber = root['list']['subs']
-        request = testing.DummyRequest()
-        apply_request_extensions(request)
-        request.root = root
-        processed_subscriber = obj.process_next(request, email_list.uid)
-        self.assertEqual(subscriber, processed_subscriber)
-        self.assertNotIn(subscriber.uid, obj.pending[email_list.uid])
-        self.assertIn(subscriber.uid, obj.completed[email_list.uid])
-        self.assertIsInstance(obj.completed[email_list.uid][subscriber.uid], datetime)
+    def test_queue_len(self):
+        obj = self._cut()
+        self.assertEqual(obj.queue_len, 0)
+        obj.add_queue('subscriber_uid', 'list_uid', 'tpl_uid')
+        self.assertEqual(obj.queue_len, 1)
+
+    def test_pop_next(self):
+        obj = self._cut()
+        obj.add_queue('subscriber_uid1', 'list_uid', 'tpl_uid')
+        obj.add_queue('subscriber_uid2', 'list_uid', 'tpl_uid')
+        obj.add_queue('subscriber_uid3', 'list_uid', 'tpl_uid')
+        self.assertEqual(obj.pop_next(), ('subscriber_uid1', 'list_uid', 'tpl_uid'))
+        self.assertEqual(obj.get_uid_status('subscriber_uid1'), 0)
+
+    def test_pop_next_empty(self):
+        obj = self._cut()
+        self.assertEqual(obj.pop_next(), (None, None, None))
 
 
 class EmailListTests(TestCase):
@@ -102,30 +80,6 @@ class EmailListTests(TestCase):
     def test_verify_obj(self):
         self.failUnless(verifyObject(IEmailList, self._cut()))
 
-    def test_create_subscriber(self):
-        obj = self._cut()
-        subscriber = obj.create_subscriber("jane_doe@betahaus.net",
-                                           subscribe_token='subscribe',
-                                           unsubscribe_token='unsubscribe')
-        self.assertTrue(IListSubscriber.providedBy(subscriber))
-        self.assertEqual(subscriber.subscribe_token, 'subscribe')
-        self.assertEqual(subscriber.unsubscribe_token, 'unsubscribe')
-        self.assertIn(subscriber.uid, obj)
-
-    def test_find_subscriber(self):
-        obj = self._cut()
-        subscriber = obj.create_subscriber("jane_doe@betahaus.net")
-        self.assertEqual(subscriber, obj.find_subscriber("jane_doe@betahaus.net"))
-        self.assertEqual(None, obj.find_subscriber("404@betahaus.net"))
-
-    def test_get_emails(self):
-        obj = self._cut()
-        subscriber = obj.create_subscriber("jane_doe@betahaus.net")
-        subscriber.active = True
-        self.assertEqual(tuple(obj.get_emails()), ("jane_doe@betahaus.net",))
-        subscriber.active = False
-        self.assertEqual(tuple(obj.get_emails()), ())
-
 
 class ListSubscriberTests(TestCase):
 
@@ -144,27 +98,26 @@ class ListSubscriberTests(TestCase):
         self.failUnless(verifyClass(IListSubscriber, self._cut))
 
     def test_verify_obj(self):
-        self.failUnless(verifyObject(IListSubscriber, self._cut()))
-
-    def test_set_active(self):
-        obj = self._cut()
-        obj.set_active(True)
-        self.assertEqual(obj.active, True)
+        self.failUnless(verifyObject(IListSubscriber, self._cut("hello@world.com")))
 
     def test_get_unsubscribe_url(self):
-        root = _fixture(self.config)
-        obj = root['list']['subs']
+        root = fixture(self.config)
+        obj = root['postoffice']['s']['subs']
         request = testing.DummyRequest()
-        self.assertEqual(obj.get_unsubscribe_url(request), "http://example.com/list/subs/unsubscribe/unsub_token")
+        self.assertEqual(obj.get_unsubscribe_url(request), "http://example.com/postoffice/s/subs/unsubscribe/token")
 
     def test_get_subscribe_url(self):
-        root = _fixture(self.config)
-        obj = root['list']['subs']
+        self.config.include('arche_papergirl.views')
+        root = fixture(self.config)
+        obj = root['postoffice']['s']['subs']
+        obj.uid = 'subs_uid'
+        email_list = root['postoffice']['list']
+        email_list.uid = 'el_uid'
         request = testing.DummyRequest()
-        self.assertEqual(obj.get_subscribe_url(request), "http://example.com/list/subs/subscribe/sub_token")
+        self.assertEqual(obj.get_subscribe_url(request, email_list), "http://example.com/cf/el_uid/subs_uid/token")
 
 
-class RenderNewsletterTests(TestCase):
+class ListSubscribersTests(TestCase):
 
     def setUp(self):
         self.config = testing.setUp()
@@ -173,24 +126,36 @@ class RenderNewsletterTests(TestCase):
         testing.tearDown()
 
     @property
-    def _fut(self):
-        from arche_papergirl.models import render_newsletter
-        return render_newsletter
+    def _cut(self):
+        from arche_papergirl.models import ListSubscribers
+        return ListSubscribers
 
-    def test_render_dummy(self):
-        root = _fixture(self.config)
-        request = testing.DummyRequest()
-        subscriber = root['list']['subs']
-        root['list'].mail_template = "Hello ${name}"
-        result = self._fut(request, root['newsletter'], subscriber, root['list'], name = 'World')
-        self.assertEqual(result, "Hello World")
+    def test_verify_class(self):
+        self.failUnless(verifyClass(IListSubscribers, self._cut))
 
-    def test_render_default(self):
-        self.config.include('pyramid_chameleon')
-        root = _fixture(self.config)
-        request = testing.DummyRequest()
-        email_list = root['list']
-        email_list.mail_template = _default_mail_tpl(request)
-        result = self._fut(request, root['newsletter'], root['list']['subs'], email_list)
-        self.assertIn("åäö!?", result)
-        self.assertIn("http://example.com/list/subs/unsubscribe/unsub_token", result)
+    def test_verify_obj(self):
+        self.failUnless(verifyObject(IListSubscribers, self._cut()))
+
+    def test_update_cache(self):
+        root = fixture(self.config)
+        po = root['postoffice']
+        obj = po['s']
+        subs = po['s']['subs']
+        obj.update_cache(subs)
+        self.assertIn('token', obj._token_to_name)
+        self.assertEqual(subs.__name__, obj._token_to_name['token'])
+        self.assertIn('jane_doe@betahaus.net', obj._email_to_name)
+        self.assertEqual(subs.__name__, obj._email_to_name['jane_doe@betahaus.net'])
+        subs.token = 'othert'
+        subs.email = 'robin@betahaus.net'
+        obj.update_cache(subs)
+        self.assertIn('othert', obj._token_to_name)
+        self.assertIn('robin@betahaus.net', obj._email_to_name)
+
+    def test_emails(self):
+        self.config.include('arche.testing')
+        self.config.include('arche.testing.catalog')
+        self.config.include('arche_papergirl.models')
+        root = fixture(self.config)
+        obj = root['postoffice']['s']
+        self.assertEqual(set(obj.emails()), set(['jane_doe@betahaus.net']))

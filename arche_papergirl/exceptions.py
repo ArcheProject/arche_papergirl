@@ -1,0 +1,4 @@
+
+
+class AlreadyInQueueError(Exception):
+    pass

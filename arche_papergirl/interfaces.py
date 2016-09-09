@@ -16,5 +16,21 @@ class IEmailList(IContent):
     pass
 
 
+class IPostOffice(IContent):
+    pass
+
+
+class IEmailQueue(IBase, IIndexedContent):
+    pass
+
+
+class IEmailListTemplate(IContent):
+    pass
+
+
 class IListSubscriber(IBase, IIndexedContent):
+    pass
+
+
+class IListSubscribers(IBase, IIndexedContent):
     pass

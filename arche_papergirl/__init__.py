@@ -5,6 +5,7 @@ _ = TranslationStringFactory('arche_papergirl')
 
 
 def includeme(config):
+    config.include('.catalog')
     config.include('.models')
     config.include('.schemas')
     config.include('.views')

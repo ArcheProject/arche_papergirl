@@ -71,15 +71,12 @@
       <div class="panel panel-default">
         <div class="panel-body">
 
-          <tal:iter repeat="(list_uid, rec_uids) context.pending.items()">
-            <tal:defs define="email_list request.resolve_uid(list_uid)">
-              <tal:list condition="email_list">
-                <h2>${email_list.title}</h2>
-                Pending: <span data-pending-for="${list_uid}" data-to-process="${list_uid}">${len(rec_uids)}</span>
-                Completed: <span data-pending-for="${list_uid}">${len(rec_uids)}</span>
+            Queue: <span data-pending data-to-process>${context.queue_len}</span>
+            Completed: <span data-completed>${context.queue_len}</span>
 
-                <div class="progress" tal:condition="rec_uids">
-                  <div data-progress-for="${list_uid}"
+          <tal:queue condition="context.queue_len">
+                <div class="progress">
+                  <div data-progress
                        class="progress-bar progress-bar-success"
                        role="progressbar"
                        aria-valuenow="0"
@@ -89,20 +86,13 @@
                   </div>
                 </div>
 
-                <a href="${request.resource_url(context,'manual_send.json', query = {'list_uid': list_uid})}"
-                   tal:condition="len(rec_uids)"
-                   data-send-list-for="${list_uid}"
+                <a href="${request.resource_url(context,'manual_send.json')}"
+                   tal:condition="context.queue_len"
+                   data-send-list
                   class="btn btn-success">
                   <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
                   Manual send</a>
-              </tal:list>
-              <tal:list_removed condition="not email_list">
-                <h2 class="text-muted">&lt;Removed list&gt;</h2>
-                Pending: ${len(rec_uids)}
-              </tal:list_removed>
-            </tal:defs>
-          </tal:iter>
-
+          </tal:queue>
         </div>
       </div>
     </div>
@@ -124,6 +114,12 @@
       </div>
     </div>
   </div>
+
+  <p>
+    <a href="${request.resource_url(context.__parent__)}"
+       class="btn btn-default"
+      i18n:translate="">Back</a>
+  </p>
 
 </div>
 </body>

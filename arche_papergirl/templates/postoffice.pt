@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      i18n:domain="arche_papergirl">
+<body>
+<div metal:fill-slot="main-content">
+
+  <h1>${context.title}</h1>
+
+  <div class="row">
+    <div class="col-sm-8">
+      <a class="btn btn-success"
+         href="${request.resource_url(context, 'update_subscribers')}"
+         data-replace-target="#update_container">
+        Update from list
+        <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+      </a>
+      <div id="update_container"></div>
+    </div>
+    <div class="col-sm-4">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <tal:ts i18n:translate="">Lists</tal:ts>
+          <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailList'})}">
+            +
+          </a>
+        </div>
+        <ul class = "list-group">
+          <li class = "list-group-item" tal:repeat="obj email_lists">
+            <a href="${request.resource_url(obj)}">${obj.title}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <tal:ts i18n:translate="">Templates</tal:ts>
+          <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailListTemplate'})}">
+            +
+          </a>
+        </div>
+        <ul class = "list-group">
+          <li class = "list-group-item" tal:repeat="obj list_templates">
+            <a href="${request.resource_url(obj)}">${obj.title}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <tal:ts i18n:translate="">Latest newsletters</tal:ts>
+          <a href="${request.resource_url(context, 'add', query = {'content_type': 'Newsletter'})}">
+            +
+          </a>
+        </div>
+        <ul class = "list-group">
+          <li class = "list-group-item" tal:repeat="obj latest_newsletters">
+            <a href="${request.resource_url(obj)}">${obj.title}</a>
+            <span class="pull-right text-muted">${request.dt_handler.format_dt(obj.created)}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
