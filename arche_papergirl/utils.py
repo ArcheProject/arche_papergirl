@@ -1,11 +1,12 @@
 from arche.security import PERM_VIEW
 from chameleon.zpt.template import PageTemplate
+from pyramid.traversal import find_interface
+from pyramid.traversal import resource_path
 
 from arche_papergirl.interfaces import IEmailList, IPostOffice
 from arche_papergirl.interfaces import IEmailListTemplate
 from arche_papergirl.interfaces import IListSubscriber
 from arche_papergirl.interfaces import INewsletter
-from pyramid.traversal import find_interface, resource_path
 
 
 def deliver_newsletter(newsletter, request):

@@ -63,18 +63,22 @@ class ListSubscriber(Base):
         self._list_references.update(value)
 
     def add_lists(self, uids, event = True):
-        self._adj_list(uids, 'add', event=event)
-
-    def remove_lists(self, uids, event = True):
-        self._adj_list(uids, 'remove', event=event)
-
-    def _adj_list(self, uids, operator, event):
         if isinstance(uids, string_types):
             uids = (uids,)
-            list_references = set(self.list_references)
+        list_references = set(self.list_references)
+        for uid in uids:
+            if uid not in self.list_references:
+                list_references.add(uid)
+        if list_references != set(self.list_references):
+            self.update(event=event, list_references=list_references)
+
+    def remove_lists(self, uids, event = True):
+        if isinstance(uids, string_types):
+            uids = (uids,)
+        list_references = set(self.list_references)
         for uid in uids:
             if uid in self.list_references:
-                getattr(list_references, operator)(uid)
+                list_references.remove(uid)
         if list_references != set(self.list_references):
             self.update(event=event, list_references=list_references)
 

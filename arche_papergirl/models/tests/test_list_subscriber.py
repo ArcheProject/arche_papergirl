@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from unittest import TestCase
 
+from BTrees.OOBTree import OOSet
 from pyramid import testing
 from zope.interface.verify import verifyClass, verifyObject
 
@@ -28,6 +29,28 @@ class ListSubscriberTests(TestCase):
 
     def test_verify_obj(self):
         self.failUnless(verifyObject(IListSubscriber, self._cut("hello@world.com")))
+
+    def test_list_references(self):
+        obj = self._cut("hello@betahaus.net")
+        obj.list_references.add('123')
+        self.assertEqual(set(obj.list_references), set(['123']))
+        obj.list_references = ['123', 'abc']
+        self.assertEqual(set(obj.list_references), set(['123', 'abc']))
+        self.assertIsInstance(obj.list_references, OOSet)
+
+    def test_add_lists(self):
+        obj = self._cut("hello@betahaus.net")
+        obj.add_lists('1')
+        obj.add_lists(['2', '3'])
+        obj.add_lists('1')
+        self.assertEqual(set(obj.list_references), set(['1', '2', '3']))
+
+    def test_remove_lists(self):
+        obj = self._cut("hello@betahaus.net")
+        obj.list_references = ('1', '2', '3')
+        obj.remove_lists('2')
+        obj.remove_lists(['3', '4'])
+        self.assertEqual(set(obj.list_references), set(['1']))
 
     def test_get_unsubscribe_url(self):
         root = fixture(self.config)
