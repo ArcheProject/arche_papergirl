@@ -10,13 +10,13 @@ def default_mail_tpl(request):
 
 def fixture(config):
     from arche.testing import barebone_fixture
-    from arche_papergirl.models import EmailList
-    from arche_papergirl.models import PostOffice
-    from arche_papergirl.models import EmailListTemplate
-    from arche_papergirl.models import ListSubscriber
-    from arche_papergirl.models import ListSubscribers
-    from arche_papergirl.models import Newsletter
-    from arche_papergirl.models import NewsletterSection
+    from arche_papergirl.models.email_list import EmailList
+    from arche_papergirl.models.post_office import PostOffice
+    from arche_papergirl.models.email_list_template import EmailListTemplate
+    from arche_papergirl.models.list_subscriber import ListSubscriber
+    from arche_papergirl.models.list_subscribers import ListSubscribers
+    from arche_papergirl.models.newsletter import Newsletter
+    from arche_papergirl.models.newsletter import NewsletterSection
     root = barebone_fixture(config)
     root['postoffice'] = po = PostOffice()
     if 's' not in po:

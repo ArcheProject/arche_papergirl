@@ -4,12 +4,12 @@ from arche.interfaces import ISchemaCreatedEvent
 from arche.schemas import FinishRegistrationSchema
 from arche.schemas import UserSchema
 from arche.widgets import ReferenceWidget
+from arche_papergirl.utils import get_po_objs
 from pyramid.renderers import render
 from pyramid.traversal import find_interface
 
 from arche_papergirl import _
 from arche_papergirl.interfaces import IPostOffice
-from arche_papergirl.models import get_email_lists, get_email_templates
 
 
 class NewsletterSchema(colander.Schema):
@@ -63,17 +63,19 @@ def current_users_email(node, kw):
 
 @colander.deferred
 def pick_list_widget(node, kw):
+    context = kw['context']
     request = kw['request']
     values = []
-    for obj in get_email_lists(request):
+    for obj in get_po_objs(context, request, 'EmailList'):
         values.append((obj.uid, obj.title,))
     return deform.widget.RadioChoiceWidget(values=values)
 
 @colander.deferred
 def pick_lists_widget(node, kw):
+    context = kw['context']
     request = kw['request']
     values = []
-    for obj in get_email_lists(request):
+    for obj in get_po_objs(context, request, 'EmailList'):
         values.append((obj.uid, obj.title,))
     return deform.widget.CheckboxChoiceWidget(values=values)
 
@@ -85,7 +87,9 @@ def pick_lists_widget(node, kw):
 @colander.deferred
 def pick_email_template(node, kw):
     values = []
-    for obj in get_email_templates(kw['request']):
+    context = kw['context']
+    request = kw['request']
+    for obj in get_po_objs(context, request, 'EmailListTemplate'):
         values.append((obj.uid, obj.title))
     return deform.widget.RadioChoiceWidget(values=values)
 
@@ -125,6 +129,7 @@ def default_mail_template(node, kw):
     request = kw['request']
     values = {}
     return render('arche_papergirl:templates/default_mail_template.txt', values, request=request)
+
 
 def mail_template_validator(node, kw):
     #FIXME
@@ -194,7 +199,6 @@ class ListSubscriberSchema(colander.Schema):
     )
 
 
-
 class RequestSubscriptionChangeSchema(colander.Schema):
     email = colander.SchemaNode(
         colander.String(),
@@ -216,30 +220,6 @@ class PostOfficeSchema(colander.Schema):
     )
 
 
-def _subscriber_subscribe_on_profile(schema, event):
-    valid_lists = []
-    for obj in get_email_lists(event.request):
-        if obj.subscribe_on_profile == True:
-            valid_lists.append(obj)
-
-    if not valid_lists:
-        return
-    values = [(obj.uid, obj.title) for obj in valid_lists]
-    schema.add(colander.SchemaNode(
-        colander.Set(),
-        name = '_email_list_subscriptions',
-        widget = deform.widget.CheckboxChoiceWidget(values = values)
-    ))
-
-
-def _list_option_for_profile(schema, event):
-    schema.add(colander.SchemaNode(
-        colander.Bool(),
-        name='subscribe_on_profile',
-        title=_("Show this list as a subscription option when a user registers or edits their profile?"),
-    ))
-
-
 class UpdateListSubscribers(colander.Schema):
     emails = colander.SchemaNode(
         colander.String(),
@@ -259,6 +239,7 @@ class SearchSubscribersSchema(colander.Schema):
         #title=_(""),
     )
 
+
 @colander.deferred
 def pick_unsubscribe_lists(node, kw):
     request = kw['request']
@@ -276,12 +257,6 @@ class ManageUnsubscribeSchema(colander.Schema):
         title=_("Check any list to unsubscribe from it"),
         widget=pick_unsubscribe_lists,
     )
-
-
-def subscribe_on_profile(config):
-    config.add_subscriber(_subscriber_subscribe_on_profile, [FinishRegistrationSchema, ISchemaCreatedEvent])
-    config.add_subscriber(_subscriber_subscribe_on_profile, [UserSchema, ISchemaCreatedEvent])
-    config.add_subscriber(_list_option_for_profile, [EmailListSchema, ISchemaCreatedEvent])
 
 
 def includeme(config):
