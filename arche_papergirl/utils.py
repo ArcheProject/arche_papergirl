@@ -56,6 +56,6 @@ def get_po_objs(context, request, type_name, perm = PERM_VIEW, sort_index = 'sor
     po = find_interface(context, IPostOffice)
     path = resource_path(po)
     query = "type_name == '%s'" % type_name
-    query += "path == '%s'" % path
+    query += " and path == '%s'" % path
     docids = request.root.catalog.query(query, sort_index = sort_index, **kw)[1]
     return request.resolve_docids(docids, perm = perm)
