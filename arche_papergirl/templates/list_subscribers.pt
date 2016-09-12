@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      i18n:domain="arche_papergirl">
+<body>
+<div metal:fill-slot="main-content">
+
+  <form>
+    <table class="table table-responsive table-bordered table-striped table-hover sortable-table">
+      <thead>
+        <tr>
+          <!--
+          <th>
+            <input type="checkbox" data-mselect-for="checkbox-mselect" />
+          </th>
+          -->
+          <th i18n:translate=""></th>
+          <th i18n:translate="">Email</th>
+          <th i18n:translate="">Created</th>
+          <th i18n:translate="">Modified</th>
+          <th i18n:translate="">Lists</th>
+        </tr>
+      </thead>
+      <tbody id="list-subscribers" data-url="${request.resource_url(context, 'subscribers.json')}">
+        <tr>
+          <!--
+          <td>
+            <input type="checkbox" name="select" data-mselect-name="checkbox-mselect" />
+          </td>
+          -->
+          <td>
+            <span data-load-msg>
+              <span class="glyphicon glyphicon-refresh rotate-me"></span>
+              <tal:ts i18n:translate="">Loading...</tal:ts>
+            </span>
+            <a class="edit_subs"
+               href="${request.resource_url(context)}">
+              <span class="glyphicon glyphicon-edit"></span>
+            </a>
+          </td>
+          <td><span class="email"></span></td>
+          <td><span class="created"></span></td>
+          <td><span class="modified"></span></td>
+          <td class="list_tags"></td>
+        </tr>
+      </tbody>
+    </table>
+    <input type="hidden" name="action" value="" />
+  </form>
+
+<script>
+  $(function () {
+    var url = $('#list-subscribers').data('url');
+    var request = arche.do_request(url);
+    request.done(subscribers_table_from_response);
+   });
+</script>
+</div>
+</body>
+</html>

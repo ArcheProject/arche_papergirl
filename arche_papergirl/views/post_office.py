@@ -71,25 +71,10 @@ class UpdateSubscribersForm(BaseForm):
     ajax_options = """
         {success:
           function (rText, sText, xhr, form) {
-            console.log(rText);
-            //debugger;
             arche.load_flash_messages();
-            /*
-            var loc = xhr.getResponseHeader('X-Relocate');
-            if (loc) {
-              document.location = loc;
-            };
-            */
            }
         }
     """
-
-    # @property
-    # def form_options(self):
-    #     options = super(UpdateSubscribersForm, self).form_options
-    #     #options['action'] = self.request.resource_url(self.context, 'add_subscriber')
-    #     print "form action:", options['action']
-    #     return options
 
     def add_success(self, appstruct):
         #obj = self.request.content_factories['ListSubscriber'](email = appstruct['email'])
@@ -113,9 +98,7 @@ class UpdateSubscribersForm(BaseForm):
             if subs is None:
                 #Don't create if they don't exist!
                 continue
-
             subs.remove_lists(appstruct['lists'])
-        print appstruct
         self.flash_messages.add('remove success')
         return _redirect_or_remove(self)
 

@@ -1,15 +1,12 @@
 import colander
 import deform
-from arche.interfaces import ISchemaCreatedEvent
-from arche.schemas import FinishRegistrationSchema
-from arche.schemas import UserSchema
 from arche.widgets import ReferenceWidget
-from arche_papergirl.utils import get_po_objs
 from pyramid.renderers import render
 from pyramid.traversal import find_interface
 
 from arche_papergirl import _
 from arche_papergirl.interfaces import IPostOffice
+from arche_papergirl.utils import get_po_objs
 
 
 class NewsletterSchema(colander.Schema):
@@ -233,10 +230,11 @@ class UpdateListSubscribers(colander.Schema):
     )
 
 
-class SearchSubscribersSchema(colander.Schema):
-    text=colander.SchemaNode(
-        colander.String(),
-        #title=_(""),
+class EditListSubscriber(colander.Schema):
+    list_references = colander.SchemaNode(
+        colander.Set(),
+        title=_("Lists"),
+        widget=pick_lists_widget,
     )
 
 
@@ -267,8 +265,8 @@ def includeme(config):
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))
     config.add_content_schema('EmailListTemplate', EmailListTemplateSchema, ('add', 'edit', 'view'))
-    config.add_content_schema('ListSubscriber', UpdateListSubscribers, ('update',))
     config.add_content_schema('EmailList', RequestSubscriptionChangeSchema, 'request')
     config.add_content_schema('PostOffice', PostOfficeSchema, ('add', 'edit'))
-    config.add_content_schema('ListSubscribers', SearchSubscribersSchema, 'search')
+    config.add_content_schema('ListSubscriber', UpdateListSubscribers, 'update')
+    config.add_content_schema('ListSubscriber', EditListSubscriber, 'edit')
     config.add_content_schema('ListSubscriber', ManageUnsubscribeSchema, 'manage_unsubscribe')

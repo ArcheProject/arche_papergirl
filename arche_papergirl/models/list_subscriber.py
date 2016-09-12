@@ -29,6 +29,7 @@ class ListSubscriber(Base):
 #    naming_attr = 'uid'
     email = ""
     token = ""
+    modified = None
 
     def __init__(self, email = None, token = _create_token(), **kw):
         assert email
@@ -47,7 +48,6 @@ class ListSubscriber(Base):
         return request.route_url('confirm_subscription',
                                  email_list=email_list_uid,
                                  list_subscriber=self.uid, token=self.token)
-        #return request.resource_url(self, 'subscribe', self.token, email_list_uid)
 
     def reset_token(self, token = _create_token()):
         self.token = token

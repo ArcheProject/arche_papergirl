@@ -12,7 +12,7 @@ from js.jquery import jquery
 
 papergirl_lib = Library('papergirl', 'static')
 
-paper_manage = Resource(papergirl_lib, 'manage.js', depends=(common_js,))
+paper_manage = Resource(papergirl_lib, 'manage.js', depends=(common_js, pure_js))
 
 
 #def include_resources(view, event):
