@@ -15,28 +15,21 @@
     <div class="list-group-item" tal:repeat="obj sections">
       <div class="dropdown pull-right">
         <a href="${request.resource_url(obj, 'edit')}"
-           class="btn btn-default"
+           class="btn btn-default btn-sm"
            title="Edit"
            i18n:attributes="title;">
           <span class="glyphicon glyphicon-edit"></span>
         </a>
-        <a class="btn btn-default dropdown-toggle"
+        <a class="btn btn-default btn-sm dropdown-toggle"
                  id="dropdownMenu-${obj.uid}" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="true">
           <span class="glyphicon glyphicon-cog"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${obj.uid}">
           <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
-          <!--
-          <li role="separator" class="divider"></li>
-          <li><a href="#">Separated link</a></li>
-          -->
         </ul>
       </div>
       <h3 tal:condition="obj.title" class="media-heading">${obj.title}</h3>
-      <h3 tal:condition="not obj.title"
-          class="text-muted media-heading"
-          i18n:translate="">(None)</h3>
       <div tal:condition="obj.body">${structure: obj.body}</div>
       <div tal:condition="not obj.body"
            class="text-muted"
@@ -51,7 +44,6 @@
       <span i18n:translate="">New section</span>
     </a>
   </p>
-
 
   <ul class="nav nav-pills">
     <li class="active">
@@ -70,33 +62,37 @@
     <div class="tab-pane active" id="status_tab">
       <div class="panel panel-default">
         <div class="panel-body">
-
-            Queue: <span data-pending data-to-process>${context.queue_len}</span>
-            Completed: <span data-completed>${context.queue_len}</span>
+          Active:
+          Queue: <span data-pending data-to-process>${context.queue_len}</span>
+          Completed: <span data-completed>${context.queue_len}</span>
 
           <tal:queue condition="context.queue_len">
-                <div class="progress">
-                  <div data-progress
-                       class="progress-bar progress-bar-success"
-                       role="progressbar"
-                       aria-valuenow="0"
-                       aria-valuemin="0"
-                       aria-valuemax="100"
-                       style="width: 0%">
-                  </div>
-                </div>
+            <div class="progress">
+              <div data-progress
+                   class="progress-bar progress-bar-success"
+                   role="progressbar"
+                   aria-valuenow="0"
+                   aria-valuemin="0"
+                   aria-valuemax="100"
+                   style="width: 0%">
+              </div>
+            </div>
 
-                <a href="${request.resource_url(context,'manual_send.json')}"
-                   tal:condition="context.queue_len"
-                   data-send-list
-                  class="btn btn-success">
-                  <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
-                  Manual send</a>
+            <a href="${request.resource_url(context,'manual_send.json')}"
+               tal:condition="context.queue_len"
+               data-send-list
+              class="btn btn-success">
+              <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+              Manual send</a>
           </tal:queue>
 
-
           <h3>Status</h3>
-          ${context.get_status()}
+
+          <div tal:define="status context.get_status()">
+            Queue: ${status['queue']}
+            Delivered: ${status['delivered']}
+            Errored: ${status['error']}
+          </div>
         </div>
       </div>
     </div>

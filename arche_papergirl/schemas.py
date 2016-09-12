@@ -18,6 +18,7 @@ class NewsletterSchema(colander.Schema):
         colander.String(),
         title = _("Lead-in or description, included in the letter"),
         widget = deform.widget.TextAreaWidget(rows = 5),
+        missing = "",
     )
 
 
