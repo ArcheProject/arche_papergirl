@@ -7,26 +7,39 @@
 <body>
 <div metal:fill-slot="main-content">
 
-  <h1>${context.title}</h1>
+
 
   <div class="row">
     <div class="col-sm-8">
-      <a class="btn btn-success"
-         href="${request.resource_url(context, 'update_subscribers')}"
-         data-replace-target="#update_container">
-        Update from list
-        <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
-      </a>
       <div id="update_container"></div>
     </div>
     <div class="col-sm-4">
 
+      <h3>${context.title}</h3>
+
       <div class="panel panel-default">
-        <div class="panel-body">
-          <tal:ts i18n:translate="">Lists</tal:ts>
-          <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailList'})}">
-            +
-          </a>
+        <div class="panel-heading">
+          <h3 class="panel-title" i18n:translate="">Subscribers</h3>
+        </div>
+        <ul class = "list-group">
+          <li class = "list-group-item" >
+            <a href="${request.resource_url(context, 'update_subscribers')}"
+              data-replace-target="#update_container">
+              <span i18n:translate="">Update from list</span>
+              <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title" i18n:translate="">
+            <tal:ts i18n:translate="">Lists</tal:ts>
+            <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailList'})}">
+              +
+            </a>
+          </h3>
         </div>
         <ul class = "list-group">
           <li class = "list-group-item" tal:repeat="obj email_lists">
@@ -36,11 +49,13 @@
       </div>
 
       <div class="panel panel-default">
-        <div class="panel-body">
-          <tal:ts i18n:translate="">Templates</tal:ts>
-          <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailListTemplate'})}">
-            +
-          </a>
+        <div class="panel-heading">
+          <h3 class="panel-title" i18n:translate="">
+            <tal:ts i18n:translate="">Templates</tal:ts>
+            <a href="${request.resource_url(context, 'add', query = {'content_type': 'EmailListTemplate'})}">
+              +
+            </a>
+          </h3>
         </div>
         <ul class = "list-group">
           <li class = "list-group-item" tal:repeat="obj list_templates">
@@ -50,11 +65,13 @@
       </div>
 
       <div class="panel panel-default">
-        <div class="panel-body">
-          <tal:ts i18n:translate="">Latest newsletters</tal:ts>
-          <a href="${request.resource_url(context, 'add', query = {'content_type': 'Newsletter'})}">
-            +
-          </a>
+        <div class="panel-heading">
+          <h3 class="panel-title" i18n:translate="">
+            <tal:ts i18n:translate="">Latest newsletters</tal:ts>
+            <a href="${request.resource_url(context, 'add', query = {'content_type': 'Newsletter'})}">
+              +
+            </a>
+          </h3>
         </div>
         <ul class = "list-group">
           <li class = "list-group-item" tal:repeat="obj latest_newsletters">

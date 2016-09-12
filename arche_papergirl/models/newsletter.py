@@ -15,6 +15,13 @@ from arche_papergirl.interfaces import INewsletterSection
 
 @implementer(INewsletter)
 class Newsletter(Content):
+    """ Newsletter objects
+
+        about statuses
+        Any positive status for uid should be it's queue position
+        0 means that it's done
+        A negative number is held for indicating other things
+    """
     type_name = "Newsletter"
     type_title = _("Newsletter")
     add_permission = "Add %s" % type_name
@@ -53,6 +60,17 @@ class Newsletter(Content):
 
     def get_uid_status(self, uid, default = None):
         return self._uid_to_status.get(uid, default)
+
+    def get_status(self):
+        results = {'queue': 0, 'delivered': 0, 'error': 0}
+        for i in self._uid_to_status.values():
+            if i > 0:
+                results['queue'] += 1
+            if i == 0:
+                results['delivered'] += 1
+            if i < 0:
+                results['error'] += 1
+        return results
 
 
 @implementer(INewsletterSection)

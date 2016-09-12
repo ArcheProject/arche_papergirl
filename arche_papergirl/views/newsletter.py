@@ -90,7 +90,7 @@ class SendToListSubForm(BaseForm):
         list_uid = appstruct['recipient_list']
         found_subs = 0
         already_added_subs = 0
-        query = "subscribed_lists == '%s' and type_name == 'ListSubscriber'" % list_uid
+        query = "list_references == '%s' and type_name == 'ListSubscriber'" % list_uid
         for subs in self.catalog_query(query, resolve=True):
             try:
                 self.context.add_queue(subs.uid, list_uid, appstruct['email_template'])

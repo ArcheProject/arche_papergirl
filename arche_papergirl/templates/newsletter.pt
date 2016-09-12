@@ -93,6 +93,10 @@
                   <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
                   Manual send</a>
           </tal:queue>
+
+
+          <h3>Status</h3>
+          ${context.get_status()}
         </div>
       </div>
     </div>
