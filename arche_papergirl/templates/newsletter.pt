@@ -92,6 +92,9 @@
       <a href="#status_tab" data-toggle="tab" i18n:translate="">Status</a>
     </li>
     <li>
+      <a href="#preview_tab" data-toggle="tab" i18n:translate="">Preview</a>
+    </li>
+    <li>
       <a href="#test_tab" data-toggle="tab" i18n:translate="">Test</a>
     </li>
     <li>
@@ -139,8 +142,15 @@
       </div>
     </div>
 
-    <div class="tab-pane" id="test_tab">
+    <div class="tab-pane" id="preview_tab">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          ${structure: preview_form}
+        </div>
+      </div>
+    </div>
 
+    <div class="tab-pane" id="test_tab">
       <div class="panel panel-default">
         <div class="panel-body">
           ${structure: send_single_form}

@@ -113,6 +113,18 @@ class SendSingleRecipient(colander.Schema):
     )
 
 
+class PreviewSchema(colander.Schema):
+    description = _("preview_schema_description",
+                    default="This will go to a blank page with an estimation of "
+                            "how the newsletter will look. Remember "
+                            "that mail clients may behave very different when they render email!")
+    email_template = colander.SchemaNode(
+        colander.String(),
+        title = _("Pick a layout to use"),
+        widget = pick_email_template,
+    )
+
+
 class SendToLists(colander.Schema):
     email_template = colander.SchemaNode(
         colander.String(),
@@ -270,6 +282,7 @@ def includeme(config):
     config.add_content_schema('NewsletterSection', NewsletterSectionSchema, 'edit')
     config.add_content_schema('NewsletterSection', AddNewsletterSectionSchema, 'add')
     config.add_content_schema('Newsletter', SendSingleRecipient, 'send_single')
+    config.add_content_schema('Newsletter', PreviewSchema, 'preview')
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))
     config.add_content_schema('EmailListTemplate', EmailListTemplateSchema, ('add', 'edit', 'view'))
