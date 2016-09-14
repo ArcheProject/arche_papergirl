@@ -57,6 +57,21 @@ class NewsletterView(BaseView):
         return {'status': 'sent',
                 'pending': self.context.queue_len}
 
+    @view_config(name = 'send_details', renderer = 'arche_papergirl:templates/send_details.pt')
+    def send_details(self):
+        email_templates = {}
+        email_lists = {}
+        results = []
+        for uid in self.context.recipient_uids():
+            status, list_uid, tpl_uid = self.context.get_uid_status(uid)
+            row = {'subs': self.request.resolve_uid(uid),
+                   'status': status,
+                   'email_list': email_lists.setdefault(list_uid, self.request.resolve_uid(list_uid)),
+                   'email_tpl': email_templates.setdefault(tpl_uid, self.request.resolve_uid(tpl_uid)),
+                   }
+            results.append(row)
+        return {'details': results}
+
 
 @view_config(context=INewsletter, permission=PERM_EDIT, name='preview.html')
 def preview_view(context, request):

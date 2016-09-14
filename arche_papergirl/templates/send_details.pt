@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      i18n:domain="arche_papergirl">
+<body>
+<div metal:fill-slot="main-content">
+
+  <h3 i18n:translate="">Details</h3>
+
+  <table class="table table-responsive table-bordered table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>List</th>
+        <th>Template</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tal:iter repeat="row details">
+        <tr tal:define="obj row['subs'];">
+          <td>
+            <a href="${request.resource_url(obj, 'edit', query={'came_from': request.url})}">
+              ${obj.email}
+            </a>
+          </td>
+          <td tal:define="email_list row['email_list']">
+            <a href="${request.resource_url(email_list)}">
+              ${email_list.title}
+            </a>
+          </td>
+          <td tal:define="email_tpl row['email_tpl']">
+            <a href="${request.resource_url(email_tpl)}">
+              ${email_tpl.title}
+            </a>
+          </td>
+          <td>
+            ${row['status']}
+          </td>
+        </tr>
+      </tal:iter>
+    </tbody>
+  </table>
+
+  <p>
+    <a href="${request.resource_url(context)}"
+       class="btn btn-default"
+      i18n:translate="">Back</a>
+  </p>
+
+
+</div>
+</body>
+</html>

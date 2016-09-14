@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from BTrees.LOBTree import LOBTree
-from BTrees.OLBTree import OLBTree
+from BTrees.OOBTree import OOBTree
 from arche.api import Base
 from arche.api import Content
 from zope.interface import implementer
@@ -31,7 +31,7 @@ class Newsletter(Content):
     def __init__(self, **kw):
         super(Newsletter, self).__init__(**kw)
         self._queue = LOBTree()
-        self._uid_to_status = OLBTree()
+        self._uid_to_status = OOBTree()
 
     def add_queue(self, subscriber_uid, list_uid, tpl_uid):
         if subscriber_uid in self._uid_to_status:
@@ -41,7 +41,7 @@ class Newsletter(Content):
         except ValueError:
             key = 1
         self._queue[key] = (subscriber_uid, list_uid, tpl_uid)
-        self.set_uid_status(subscriber_uid, key)
+        self.set_uid_status(subscriber_uid, key, list_uid, tpl_uid)
 
     @property
     def queue_len(self):
@@ -53,18 +53,18 @@ class Newsletter(Content):
         except ValueError:
             return None, None, None
         subscriber_uid, list_uid, tpl_uid = self._queue.pop(key)
-        self.set_uid_status(subscriber_uid, 0)
+        self.set_uid_status(subscriber_uid, 0, list_uid, tpl_uid)
         return subscriber_uid, list_uid, tpl_uid
 
-    def set_uid_status(self, uid, status):
-        self._uid_to_status[uid] = status
+    def set_uid_status(self, uid, status, list_uid, tpl_uid):
+        self._uid_to_status[uid] = (status, list_uid, tpl_uid)
 
     def get_uid_status(self, uid, default = None):
         return self._uid_to_status.get(uid, default)
 
     def get_status(self):
         results = {'queue': 0, 'delivered': 0, 'error': 0}
-        for i in self._uid_to_status.values():
+        for (i, list_uid, tpl_uid) in self._uid_to_status.values():
             if i > 0:
                 results['queue'] += 1
             if i == 0:
@@ -72,6 +72,9 @@ class Newsletter(Content):
             if i < 0:
                 results['error'] += 1
         return results
+
+    def recipient_uids(self):
+        return self._uid_to_status.keys()
 
     def get_sections(self):
         for obj in self.values():

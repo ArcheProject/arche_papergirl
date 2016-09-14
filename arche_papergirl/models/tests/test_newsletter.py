@@ -33,7 +33,7 @@ class NewsletterTests(TestCase):
         obj = self._cut()
         obj.add_queue('subscriber_uid', 'list_uid', 'tpl_uid')
         self.assertEqual(obj._queue[1], ('subscriber_uid', 'list_uid', 'tpl_uid'))
-        self.assertEqual(obj._uid_to_status['subscriber_uid'], 1)
+        self.assertEqual(obj._uid_to_status['subscriber_uid'], (1, 'list_uid', 'tpl_uid'))
         self.assertRaises(AlreadyInQueueError, obj.add_queue, 'subscriber_uid', 'list_uid', 'tpl_uid')
 
     def test_queue_len(self):
@@ -48,7 +48,7 @@ class NewsletterTests(TestCase):
         obj.add_queue('subscriber_uid2', 'list_uid', 'tpl_uid')
         obj.add_queue('subscriber_uid3', 'list_uid', 'tpl_uid')
         self.assertEqual(obj.pop_next(), ('subscriber_uid1', 'list_uid', 'tpl_uid'))
-        self.assertEqual(obj.get_uid_status('subscriber_uid1'), 0)
+        self.assertEqual(obj.get_uid_status('subscriber_uid1'), (0, 'list_uid', 'tpl_uid'))
 
     def test_pop_next_empty(self):
         obj = self._cut()

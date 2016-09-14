@@ -138,6 +138,12 @@
             Delivered: ${status['delivered']}
             Errored: ${status['error']}
           </div>
+
+          <a class="btn btn-default btn-sm"
+             href="${request.resource_url(context, 'send_details')}">
+            <span i18n:translate="">Show details</span>
+          </a>
+
         </div>
       </div>
     </div>
