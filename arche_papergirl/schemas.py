@@ -1,6 +1,7 @@
 import colander
 import deform
 from arche.widgets import ReferenceWidget
+from arche_papergirl.validators import multiple_email_validator
 from pyramid.renderers import render
 from pyramid.traversal import find_interface
 
@@ -228,7 +229,7 @@ class UpdateListSubscribers(colander.Schema):
         colander.String(),
         title=_("Email addresses, one per row."),
         widget=deform.widget.TextAreaWidget(rows=6),
-        #FIXME: Validator
+        validator = multiple_email_validator,
     )
     lists = colander.SchemaNode(
         colander.Set(),
