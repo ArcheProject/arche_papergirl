@@ -12,7 +12,12 @@ from arche_papergirl.utils import get_po_objs
 class NewsletterSchema(colander.Schema):
     title = colander.SchemaNode(
         colander.String(),
-        title = _("Title")
+        title = _("Title"),
+        description = _("Used as first heading in the newsletter")
+    )
+    subject = colander.SchemaNode(
+        colander.String(),
+        title = _("Mail subject line"),
     )
     description = colander.SchemaNode(
         colander.String(),
@@ -25,7 +30,7 @@ class NewsletterSchema(colander.Schema):
 class NewsletterSectionSchema(colander.Schema):
     title = colander.SchemaNode(
         colander.String(),
-        title = _("Title"),
+        title = _("Section title"),
         missing = ""
     )
     body = colander.SchemaNode(
@@ -223,6 +228,7 @@ class UpdateListSubscribers(colander.Schema):
         colander.String(),
         title=_("Email addresses, one per row."),
         widget=deform.widget.TextAreaWidget(rows=6),
+        #FIXME: Validator
     )
     lists = colander.SchemaNode(
         colander.Set(),

@@ -26,6 +26,7 @@ class Newsletter(Content):
     type_title = _("Newsletter")
     add_permission = "Add %s" % type_name
     css_icon = "glyphicon glyphicon-envelope"
+    subject = ""
 
     def __init__(self, **kw):
         super(Newsletter, self).__init__(**kw)
@@ -72,6 +73,11 @@ class Newsletter(Content):
                 results['error'] += 1
         return results
 
+    def get_sections(self):
+        for obj in self.values():
+            if INewsletterSection.providedBy(obj):
+                yield obj
+
 
 @implementer(INewsletterSection)
 class NewsletterSection(Base):
@@ -83,5 +89,5 @@ class NewsletterSection(Base):
 
 
 def includeme(config):
-    config.add_content_factory(Newsletter, addable_to = 'PostOffice')
+    config.add_content_factory(Newsletter, addable_to = 'PostOffice', addable_in = 'File')
     config.add_content_factory(NewsletterSection, addable_to = 'Newsletter')

@@ -12,6 +12,7 @@
   <h1>${context.title}</h1>
 
   <div class="list-group">
+
     <div class="list-group-item" tal:repeat="obj sections">
       <div class="dropdown pull-right">
         <a href="${request.resource_url(obj, 'edit')}"
@@ -37,14 +38,55 @@
     </div>
   </div>
 
+  <div class="list-group">
+
+    <div class="list-group-item" tal:repeat="obj attachments">
+      <div class="dropdown pull-right">
+        <a href="${request.resource_url(obj, 'edit')}"
+           class="btn btn-default btn-sm"
+           title="Edit"
+           i18n:attributes="title;">
+          <span class="glyphicon glyphicon-edit"></span>
+        </a>
+        <a class="btn btn-default btn-sm dropdown-toggle"
+                 id="dropdownMenu-${obj.uid}" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">
+          <span class="glyphicon glyphicon-cog"></span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${obj.uid}">
+          <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
+        </ul>
+      </div>
+      <h3 class="media-heading">
+        <span class="glyphicon glyphicon-paperclip"></span>
+        ${obj.filename}
+      </h3>
+      <div class="text-muted">
+        <span><span i18n:translate="">Size</span> ${'%s %s' % view.byte_format(obj.size)|obj.size}</span>
+        <span><span i18n:translate="">Type</span> ${obj.mimetype}</span>
+      </div>
+    </div>
+
+    <div id="inline_edit"></div>
+  </div>
+
   <p>
     <a href="${request.resource_url(context, 'add', query = {'content_type': 'NewsletterSection'})}"
-      class="btn btn-success">
+      class="btn btn-success"
+      data-replace-target="#inline_edit">
       <span class="glyphicon glyphicon-plus"></span>
-      <span i18n:translate="">New section</span>
+      <span i18n:translate="">Section</span>
+    </a>
+
+    <a href="${request.resource_url(context, 'add', query = {'content_type': 'File'})}"
+      class="btn btn-success"
+      data-replace-target="#inline_edit">
+      <span class="glyphicon glyphicon-plus"></span>
+      <span i18n:translate="">Attachment</span>
     </a>
   </p>
 
+  <p>&nbsp;</p>
   <ul class="nav nav-pills">
     <li class="active">
       <a href="#status_tab" data-toggle="tab" i18n:translate="">Status</a>

@@ -1,7 +1,10 @@
+from arche.interfaces import IFile, IBlobs
 from arche.security import PERM_VIEW
 from chameleon.zpt.template import PageTemplate
 from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
+from pyramid_mailer import get_mailer
+from pyramid_mailer.message import Attachment
 
 from arche_papergirl.interfaces import IEmailList, IPostOffice
 from arche_papergirl.interfaces import IEmailListTemplate
@@ -9,24 +12,32 @@ from arche_papergirl.interfaces import IListSubscriber
 from arche_papergirl.interfaces import INewsletter
 
 
-def deliver_newsletter(newsletter, request):
-    subscriber_uid, list_uid, tpl_uid = newsletter.pop_next()
-    if not subscriber_uid:
-        # Nothing to do - status?
-        return {}
-    subscriber = request.resolve_uid(subscriber_uid)
-    # assert IListSubscriber.providedBy(subscriber)
-    email_list = request.resolve_uid(list_uid)
-    tpl = request.resolve_uid(tpl_uid)
+def deliver_newsletter(request, newsletter, subscriber, email_list, tpl):
+    assert INewsletter.providedBy(newsletter)
+    assert IListSubscriber.providedBy(subscriber)
+    assert IEmailList.providedBy(email_list)
+    assert IEmailListTemplate.providedBy(tpl)
     # FIXME: Check subscriber active?
     html = render_newsletter(request, newsletter, subscriber, email_list, tpl)
-    subject = newsletter.title
-    request.send_email(
+    subject = newsletter.subject
+    msg = request.compose_email(
         subject,
         [subscriber.email],
-        html,
-        send_immediately=True
+        html
     )
+    create_attachments(newsletter, msg)
+    mailer = get_mailer(request)
+    mailer.send_immediately(msg)
+    return msg
+
+
+def create_attachments(newsletter, msg):
+    for obj in newsletter.values():
+        if IFile.providedBy(obj):
+            with IBlobs(obj)['file'].blob.open() as f:
+                attach_data = f.read()
+                attachment = Attachment(obj.filename, obj.mimetype, attach_data)
+                msg.attach(attachment)
 
 
 def render_newsletter(request, newsletter, subscriber, email_list, email_template, **kwargs):

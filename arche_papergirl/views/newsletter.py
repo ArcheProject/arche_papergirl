@@ -2,12 +2,16 @@
 from __future__ import unicode_literals
 
 import deform
+from arche.interfaces import IFile
 from arche.security import NO_PERMISSION_REQUIRED
 from arche.security import PERM_EDIT
-from arche.views.base import BaseView, DefaultAddForm, BaseForm
+from arche.views.base import BaseView
+from arche.views.base import DefaultAddForm
+from arche.views.base import BaseForm
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+from arche.views.file import AddFileForm
 
 from arche_papergirl import _
 from arche_papergirl.exceptions import AlreadyInQueueError
@@ -24,7 +28,11 @@ class NewsletterView(BaseView):
     @view_config(name='view', renderer='arche_papergirl:templates/newsletter.pt')
     def view(self):
         paper_manage.need()
+        #Autoneed fetches css/js dependencies if we initialize the forms here
+        InlineAddFileForm(self.context, self.request)()
+        AddSectionForm(self.context, self.request)()
         sections = [x for x in self.context.values() if INewsletterSection.providedBy(x)]
+        attachments = [x for x in self.context.values() if IFile.providedBy(x)]
         single_form = SendSingleSubForm(self.context, self.request)()
         to_list_form = SendToListSubForm(self.context, self.request)()
         for subform in (single_form, to_list_form):
@@ -33,12 +41,14 @@ class NewsletterView(BaseView):
                     return subform
                 raise subform
         return {'sections': sections,
+                'attachments': attachments,
                 'send_single_form': single_form['form'],
                 'send_to_list_form': to_list_form['form']}
 
     @view_config(name = 'manual_send.json', renderer='json')
     def manual_send(self):
-        deliver_newsletter(self.context, self.request)
+        subscriber, email_list, tpl = _next_objs(self.context, self.request)
+        deliver_newsletter(self.request, self.context, subscriber, email_list, tpl)
         return {'status': 'sent',
                 'pending': self.context.queue_len}
 
@@ -50,7 +60,6 @@ class SendSingleSubForm(BaseForm):
     formid = 'deform-send-single'
     #Important - make sure button names are unique since all forms will execute otherwise
     buttons = (deform.Button('send_single', title = _("Send")),)
-    #use_ajax = True
 
     @property
     def form_options(self):
@@ -67,12 +76,7 @@ class SendSingleSubForm(BaseForm):
         email_list = self.request.content_factories['EmailList'](
             title = self.request.localizer.translate(_("(Test list title)"))
         )
-        html = render_newsletter(self.request, self.context, subscriber, email_list, email_template)
-        subject = self.context.title
-        self.request.send_email(subject,
-                                [appstruct['email']],
-                                html,
-                                send_immediately = True)
+        deliver_newsletter(self.request, self.context, subscriber, email_list, email_template)
         self.flash_messages.add(self.default_success, type='success')
         return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -84,7 +88,6 @@ class SendToListSubForm(BaseForm):
     formid = 'deform-to-lists'
     #Important - make sure button names are unique since all forms will execute otherwise
     buttons = (deform.Button('send_to_lists', title = _("Send")),)
-    #use_ajax = True
 
     def send_to_lists_success(self, appstruct):
         list_uid = appstruct['recipient_list']
@@ -107,14 +110,44 @@ class SendToListSubForm(BaseForm):
 
 @view_config(context = INewsletter,
              name = 'add',
+             request_param="content_type=NewsletterSection",
              permission = NO_PERMISSION_REQUIRED,
              renderer = 'arche:templates/form.pt')
 class AddSectionForm(DefaultAddForm):
+    type_name = 'NewsletterSection'
+    use_ajax = True
 
     def save_success(self, appstruct):
         #FIXME: populate from referenced, or create blank
         section_appstruct = {}
-        return super(AddSectionForm, self).save_success(section_appstruct)
+        res = super(AddSectionForm, self).save_success(section_appstruct)
+        if isinstance(res, HTTPFound) and self.request.is_xhr:
+            return self.relocate_response(res.location, msg = "")
+        return res
+
+    def cancel(self, *args):
+        return  self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
+    cancel_success = cancel_failure = cancel
+
+
+@view_config(context = INewsletter,
+             name = 'add',
+             request_param="content_type=File",
+             permission = NO_PERMISSION_REQUIRED,
+             renderer = 'arche:templates/form.pt')
+class InlineAddFileForm(AddFileForm):
+    use_ajax = True
+
+    def save_success(self, appstruct):
+        res = super(InlineAddFileForm, self).save_success(appstruct)
+        if isinstance(res, HTTPFound) and self.request.is_xhr:
+            url = self.request.resource_url(self.context) #To parent instead
+            return self.relocate_response(url, msg="")
+        return res
+
+    def cancel(self, *args):
+        return self.relocate_response(self.request.resource_url(self.context), msg=self.default_cancel)
+    cancel_success = cancel_failure = cancel
 
 
 @view_config(context=INewsletterSection,
@@ -122,6 +155,17 @@ class AddSectionForm(DefaultAddForm):
 def redirect_to_parent_uid_anchor(context, request):
     url = request.resource_url(context.__parent__, anchor = context.uid)
     return HTTPFound(location = url)
+
+
+def _next_objs(newsletter, request):
+    subscriber_uid, list_uid, tpl_uid = newsletter.pop_next()
+    if not subscriber_uid:
+        return None, None, None
+    return (
+        request.resolve_uid(subscriber_uid),
+        request.resolve_uid(list_uid),
+        request.resolve_uid(tpl_uid),
+    )
 
 
 def includeme(config):

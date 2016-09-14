@@ -1,7 +1,7 @@
 <h1>${newsletter.title}</h1>
 <p tal:condition="newsletter.description">${newsletter.description}</p>
 
-<tal:sections repeat="section newsletter.values()">
+<tal:sections repeat="section newsletter.get_sections()">
     <h2 tal:condition="section.title">${section.title}</h2>
     <div tal:condition="section.body">${structure: section.body}</div>
 </tal:sections>
