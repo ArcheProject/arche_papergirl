@@ -7,5 +7,6 @@
 </tal:sections>
 
 <hr/>
-${subscriber.get_unsubscribe_url(request)}
-${email_list.title}
+You've received this message since you're registered in the list ${email_list.title}.
+In case you don't want to receive this kind of communication, you may manage your subscriptions
+<a href="${subscriber.get_unsubscribe_url(request)}">here</a>
