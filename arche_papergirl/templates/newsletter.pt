@@ -9,10 +9,19 @@
   <!--
   <img tal:replace="structure view.thumb_tag(context, 'col-2', extra_cls = 'pull-right')" />
   -->
-  <h1>${context.title}</h1>
+  <h3>
+    <span class="text-muted" i18n:translate="">Subject:</span>
+    ${context.subject}
+  </h3>
 
   <div class="list-group">
+    <div class="list-group-item">
 
+      <h1>${context.title}</h1>
+
+      <p>${context.description}</p>
+
+    </div>
     <div class="list-group-item" tal:repeat="obj sections">
       <div class="dropdown pull-right">
         <a href="${request.resource_url(obj, 'edit')}"

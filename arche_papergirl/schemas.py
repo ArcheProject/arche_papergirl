@@ -9,6 +9,15 @@ from arche_papergirl import _
 from arche_papergirl.interfaces import IPostOffice
 from arche_papergirl.utils import get_po_objs
 
+@colander.deferred
+def pick_email_template(node, kw):
+    values = []
+    context = kw['context']
+    request = kw['request']
+    for obj in get_po_objs(context, request, 'EmailListTemplate'):
+        values.append((obj.uid, obj.title))
+    return deform.widget.RadioChoiceWidget(values=values)
+
 
 class NewsletterSchema(colander.Schema):
     title = colander.SchemaNode(
@@ -25,6 +34,12 @@ class NewsletterSchema(colander.Schema):
         title = _("Lead-in or description, included in the letter"),
         widget = deform.widget.TextAreaWidget(rows = 5),
         missing = "",
+    )
+    email_template = colander.SchemaNode(
+        colander.String(),
+        title = _("Pick a layout to use for this letter"),
+        widget = pick_email_template,
+        #validator = pick_list_validator
     )
 
 
@@ -88,15 +103,6 @@ def pick_lists_widget(node, kw):
 #    request = kw['request']
 #   return colander.OneOf([x.uid for x in get_email_lists(request)])
 
-@colander.deferred
-def pick_email_template(node, kw):
-    values = []
-    context = kw['context']
-    request = kw['request']
-    for obj in get_po_objs(context, request, 'EmailListTemplate'):
-        values.append((obj.uid, obj.title))
-    return deform.widget.RadioChoiceWidget(values=values)
-
 
 class SendSingleRecipient(colander.Schema):
     email = colander.SchemaNode(
@@ -105,12 +111,6 @@ class SendSingleRecipient(colander.Schema):
         default = current_users_email,
         validator = colander.Email()
     )
-    email_template = colander.SchemaNode(
-        colander.String(),
-        title = _("Pick a layout to use"),
-        widget = pick_email_template,
-        #validator = pick_list_validator
-    )
 
 
 class PreviewSchema(colander.Schema):
@@ -118,20 +118,9 @@ class PreviewSchema(colander.Schema):
                     default="This will go to a blank page with an estimation of "
                             "how the newsletter will look. Remember "
                             "that mail clients may behave very different when they render email!")
-    email_template = colander.SchemaNode(
-        colander.String(),
-        title = _("Pick a layout to use"),
-        widget = pick_email_template,
-    )
 
 
 class SendToLists(colander.Schema):
-    email_template = colander.SchemaNode(
-        colander.String(),
-        title = _("Pick a layout to use"),
-        widget = pick_email_template,
-        #validator = pick_list_validator
-    )
     recipient_list = colander.SchemaNode(
         colander.String(),
         title = _("Pick lists to send to"),

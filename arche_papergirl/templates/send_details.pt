@@ -14,8 +14,8 @@
       <tr>
         <th>Email</th>
         <th>List</th>
-        <th>Template</th>
         <th>Status</th>
+        <th>Timestamp</th>
       </tr>
     </thead>
     <tbody>
@@ -31,13 +31,11 @@
               ${email_list.title}
             </a>
           </td>
-          <td tal:define="email_tpl row['email_tpl']">
-            <a href="${request.resource_url(email_tpl)}">
-              ${email_tpl.title}
-            </a>
-          </td>
           <td>
             ${row['status']}
+          </td>
+          <td tal:define="timestamp row['timestamp']">
+            ${request.dt_handler.format_dt(timestamp)}
           </td>
         </tr>
       </tal:iter>

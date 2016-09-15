@@ -27,9 +27,9 @@ class ListSubscriber(Base):
     listing_visible = False
     search_visible = False
 #    naming_attr = 'uid'
+    modified = None
     email = ""
     token = ""
-    modified = None
 
     def __init__(self, email = None, token = _create_token(), **kw):
         assert email

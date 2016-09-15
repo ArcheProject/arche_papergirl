@@ -59,15 +59,22 @@ class NewsletterView(BaseView):
 
     @view_config(name = 'send_details', renderer = 'arche_papergirl:templates/send_details.pt')
     def send_details(self):
-        email_templates = {}
         email_lists = {}
         results = []
         for uid in self.context.recipient_uids():
-            status, list_uid, tpl_uid = self.context.get_uid_status(uid)
+            status, list_uid, timestamp = self.context.get_uid_status(uid)
+            if status == 0:
+                status_text = _("Delivered")
+            if status < 0:
+                status_text = _("Error (${err_num})",
+                                mapping = {'err_num': status})
+            if status > 0:
+                status_text = _("In queue (${num})",
+                                mapping = {'num': status})
             row = {'subs': self.request.resolve_uid(uid),
-                   'status': status,
+                   'status': status_text,
                    'email_list': email_lists.setdefault(list_uid, self.request.resolve_uid(list_uid)),
-                   'email_tpl': email_templates.setdefault(tpl_uid, self.request.resolve_uid(tpl_uid)),
+                   'timestamp': timestamp,
                    }
             results.append(row)
         return {'details': results}
@@ -75,10 +82,9 @@ class NewsletterView(BaseView):
 
 @view_config(context=INewsletter, permission=PERM_EDIT, name='preview.html')
 def preview_view(context, request):
-    tpl_uid = request.GET.get('tpl', None)
-    tpl = request.resolve_uid(tpl_uid)
+    tpl = request.resolve_uid(context.email_template)
     if not IEmailListTemplate.providedBy(tpl):
-        raise HTTPNotFound()
+        raise HTTPNotFound("Specified template not found")
     subscriber = request.content_factories['ListSubscriber'](
         email="noreply@betahaus.net",
         token="TEST",
@@ -104,7 +110,7 @@ class SendSingleSubForm(BaseForm):
         return options
 
     def send_single_success(self, appstruct):
-        email_template = self.request.resolve_uid(appstruct['email_template'])
+        email_template = self.request.resolve_uid(self.context.email_template)
         subscriber = self.request.content_factories['ListSubscriber'](
             email = appstruct['email'],
             token = "TEST",
@@ -126,8 +132,7 @@ class PreviewSubForm(BaseForm):
     buttons = (deform.Button('preview', title = _("Preview")),)
 
     def preview_success(self, appstruct):
-        return HTTPFound(location=self.request.resource_url(self.context, 'preview.html',
-                                                            query = {'tpl':appstruct['email_template']}))
+        return HTTPFound(location=self.request.resource_url(self.context, 'preview.html'))
 
 
 class SendToListSubForm(BaseForm):
@@ -145,7 +150,7 @@ class SendToListSubForm(BaseForm):
         query = "list_references == '%s' and type_name == 'ListSubscriber'" % list_uid
         for subs in self.catalog_query(query, resolve=True):
             try:
-                self.context.add_queue(subs.uid, list_uid, appstruct['email_template'])
+                self.context.add_queue(subs.uid, list_uid)
                 found_subs += 1
             except AlreadyInQueueError:
                 already_added_subs += 1
@@ -207,14 +212,13 @@ def redirect_to_parent_uid_anchor(context, request):
 
 
 def _next_objs(newsletter, request):
-    subscriber_uid, list_uid, tpl_uid = newsletter.pop_next()
+    subscriber_uid, list_uid = newsletter.pop_next()
     if not subscriber_uid:
         return None, None, None
-    return (
-        request.resolve_uid(subscriber_uid),
-        request.resolve_uid(list_uid),
-        request.resolve_uid(tpl_uid),
-    )
+    subscriber = request.resolve_uid(subscriber_uid)
+    email_list = request.resolve_uid(list_uid)
+    tpl = request.resolve_uid(newsletter.email_template)
+    return subscriber, email_list, tpl
 
 
 def includeme(config):
