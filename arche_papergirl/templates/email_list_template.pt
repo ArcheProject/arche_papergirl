@@ -8,12 +8,14 @@
 <div metal:fill-slot="main-content">
 
   <h1>${context.title}</h1>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Approx. template look</div>
+    <div class="panel-body">
+      <object width="100%" height="300" data="${request.resource_url(context, 'tpl.html')}"></object>
+    </div>
+  </div>
 
-  <hr/>
-
-  ${structure: dummy_email}
-
-  <hr/>
 
   <p>
     <a href="${request.resource_url(context.__parent__)}"
