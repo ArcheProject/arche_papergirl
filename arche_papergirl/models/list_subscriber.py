@@ -33,6 +33,7 @@ class ListSubscriber(Base):
 
     def __init__(self, email = None, token = _create_token(), **kw):
         assert email
+        email = email.lower()
         self._list_references = OOSet()
         super(ListSubscriber, self).__init__(email = email, token = token, **kw)
 
