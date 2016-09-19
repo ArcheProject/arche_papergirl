@@ -6,9 +6,7 @@
       i18n:domain="arche_papergirl">
 <body>
 <div metal:fill-slot="main-content">
-  <!--
-  <img tal:replace="structure view.thumb_tag(context, 'col-2', extra_cls = 'pull-right')" />
-  -->
+
   <h3>
     <span class="text-muted" i18n:translate="">Subject:</span>
     ${context.subject}
@@ -159,8 +157,14 @@
 
     <div class="tab-pane" id="preview_tab">
       <div class="panel panel-default">
+        <div class="panel-heading">
+          <span i18n:translate="">Approx. template look</span>
+          <a target="_blank"
+             href="${request.resource_url(context, 'preview.html')}"
+             i18n:translate="">Open in new window</a>
+        </div>
         <div class="panel-body">
-          ${structure: preview_form}
+          <object width="100%" height="300" data="${request.resource_url(context, 'preview.html')}"></object>
         </div>
       </div>
     </div>

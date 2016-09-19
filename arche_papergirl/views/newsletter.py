@@ -37,9 +37,8 @@ class NewsletterView(BaseView):
         sections = [x for x in self.context.values() if INewsletterSection.providedBy(x)]
         attachments = [x for x in self.context.values() if IFile.providedBy(x)]
         single_form = SendSingleSubForm(self.context, self.request)()
-        preview_form = PreviewSubForm(self.context, self.request)()
         to_list_form = SendToListSubForm(self.context, self.request)()
-        for subform in (single_form, preview_form, to_list_form):
+        for subform in (single_form, to_list_form):
             if isinstance(subform, Exception):
                 if isinstance(subform, HTTPFound):
                     return subform
@@ -47,7 +46,6 @@ class NewsletterView(BaseView):
         return {'sections': sections,
                 'attachments': attachments,
                 'send_single_form': single_form['form'],
-                'preview_form': preview_form['form'],
                 'send_to_list_form': to_list_form['form']}
 
     @view_config(name = 'manual_send.json', renderer='json')
@@ -121,18 +119,6 @@ class SendSingleSubForm(BaseForm):
         deliver_newsletter(self.request, self.context, subscriber, email_list, email_template)
         self.flash_messages.add(self.default_success, type='success')
         return HTTPFound(location=self.request.resource_url(self.context))
-
-
-class PreviewSubForm(BaseForm):
-    schema_name = "preview"
-    type_name = "Newsletter"
-    title = _("Preview")
-    formid = 'deform-preview'
-    #Important - make sure button names are unique since all forms will execute otherwise
-    buttons = (deform.Button('preview', title = _("Preview")),)
-
-    def preview_success(self, appstruct):
-        return HTTPFound(location=self.request.resource_url(self.context, 'preview.html'))
 
 
 class SendToListSubForm(BaseForm):
