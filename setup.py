@@ -9,7 +9,8 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 requires = ('Arche',
             'betahaus.viewcomponent',
             'pyramid',
-            'pyramid_chameleon',)
+            'pyramid_chameleon',
+            'premailer',)
 
 
 setup(name='arche_papergirl',

@@ -7,7 +7,10 @@ from pyramid.traversal import find_interface
 
 from arche_papergirl import _
 from arche_papergirl.interfaces import IPostOffice
+from arche_papergirl.utils import get_mock_structure
 from arche_papergirl.utils import get_po_objs
+from arche_papergirl.utils import render_newsletter
+
 
 @colander.deferred
 def pick_email_template(node, kw):
@@ -136,9 +139,21 @@ def default_mail_template(node, kw):
     return render('arche_papergirl:templates/default_mail_template.txt', values, request=request)
 
 
-def mail_template_validator(node, kw):
-    #FIXME
-    pass
+@colander.deferred
+class MailTemplateValidator(object):
+
+    def __init__(self, node, kw):
+        self.request = kw['request']
+
+    def __call__(self, node, value):
+        newsletter, subscriber, email_list = get_mock_structure(self.request)
+        email_list_template = self.request.content_factories['EmailListTemplate'](body = value)
+        try:
+            render_newsletter(self.request, newsletter, subscriber, email_list, email_list_template)
+        except Exception as exc:
+            print exc
+            raise colander.Invalid(node, str(exc))
+
 
 
 class EmailListSchema(colander.Schema):
@@ -164,15 +179,11 @@ class EmailListTemplateSchema(colander.Schema):
         colander.String(),
         title = _("Mail template"),
         #FIXME
-        #description = _("mail_template_description",
-        #                default="Variables should be entered as ${variable_name}. "
-        #                        "The required variables are: "
-        #                        "'title', 'body', 'unsubscribe_url' and 'list_title'. "
-        #                       "You may also use html tags. "),
+        #description = ""
         widget = deform.widget.TextAreaWidget(rows=10),
         default = default_mail_template,
         missing = default_mail_template,
-        validator = mail_template_validator,
+        validator = MailTemplateValidator,
     )
 
 

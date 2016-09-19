@@ -5,6 +5,7 @@ from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Attachment
+from premailer import transform
 
 from arche_papergirl.interfaces import IEmailList, IPostOffice
 from arche_papergirl.interfaces import IEmailListTemplate
@@ -40,7 +41,7 @@ def create_attachments(newsletter, msg):
                 msg.attach(attachment)
 
 
-def render_newsletter(request, newsletter, subscriber, email_list, email_template, **kwargs):
+def render_newsletter(request, newsletter, subscriber, email_list, email_template, premailer = transform, **kwargs):
     assert INewsletter.providedBy(newsletter)
     assert IListSubscriber.providedBy(subscriber)
     assert IEmailList.providedBy(email_list)
@@ -54,7 +55,10 @@ def render_newsletter(request, newsletter, subscriber, email_list, email_templat
         **kwargs
     )
     #FIXME: Encoding, translation?
-    return page_tpl.render(**tpl_values)
+    html = page_tpl.render(**tpl_values)
+    if premailer:
+        html = premailer(html)
+    return html
 
 
 def get_po_objs(context, request, type_name, perm = PERM_VIEW, sort_index = 'sortable_title', **kw):
@@ -70,3 +74,20 @@ def get_po_objs(context, request, type_name, perm = PERM_VIEW, sort_index = 'sor
     query += " and path == '%s'" % path
     docids = request.root.catalog.query(query, sort_index = sort_index, **kw)[1]
     return request.resolve_docids(docids, perm = perm)
+
+
+def get_mock_structure(request):
+    newsletter = request.content_factories['Newsletter'](
+        title='Newsletter Title',
+        description='Short intro'
+    )
+    nl_section = request.content_factories['NewsletterSection'](
+        title='First section title',
+        body='<p>Body of the first section</p>',
+    )
+    newsletter['nl_section'] = nl_section
+    subscriber = request.content_factories['ListSubscriber'](
+        email='testing@betahaus.net'
+    )
+    email_list = request.content_factories['EmailList']()
+    return newsletter, subscriber, email_list
