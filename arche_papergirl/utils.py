@@ -57,7 +57,7 @@ def render_newsletter(request, newsletter, subscriber, email_list, email_templat
     #FIXME: Encoding, translation?
     html = page_tpl.render(**tpl_values)
     if premailer:
-        html = premailer(html)
+        html = premailer(html, base_url=request.host_url)
     return html
 
 
