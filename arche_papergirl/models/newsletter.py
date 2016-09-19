@@ -6,6 +6,7 @@ from BTrees.OOBTree import OOBTree
 from arche.api import Base
 from arche.api import Content
 from arche.utils import utcnow
+from arche_papergirl.security import PERM_ADD_NEWSLETTER
 from six import string_types
 from zope.interface import implementer
 
@@ -30,6 +31,8 @@ class Newsletter(Content):
     css_icon = "glyphicon glyphicon-envelope"
     subject = ""
     email_template = ""
+    add_permission = PERM_ADD_NEWSLETTER
+
 
     def __init__(self, **kw):
         super(Newsletter, self).__init__(**kw)

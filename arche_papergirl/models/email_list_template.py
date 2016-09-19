@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from arche.api import Content
+from arche_papergirl.security import PERM_ADD_TEMPLATE
 from zope.interface import implementer
 
 from arche_papergirl import _
@@ -18,6 +19,7 @@ class EmailListTemplate(Content):
     search_visible = False
     show_byline = False
     css_icon = "glyphicon glyphicon-duplicate"
+    add_permission = PERM_ADD_TEMPLATE
     body = ""
 
 

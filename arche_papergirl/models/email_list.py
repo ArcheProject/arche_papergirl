@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from arche.api import Content
+from arche_papergirl.security import PERM_ADD_EMAIL_LIST
 from zope.interface import implementer
 
 from arche_papergirl import _
@@ -12,6 +13,7 @@ from arche_papergirl.interfaces import IEmailList
 class EmailList(Content):
     type_name = "EmailList"
     type_title = _("EmailList")
+    add_permission = PERM_ADD_EMAIL_LIST
     default_view = "view"
     nav_visible = True
     listing_visible = True

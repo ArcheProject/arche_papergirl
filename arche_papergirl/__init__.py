@@ -9,4 +9,5 @@ def includeme(config):
     config.include('.subscribers')
     config.include('.models')
     config.include('.schemas')
+    config.include('.security')
     config.include('.views')
