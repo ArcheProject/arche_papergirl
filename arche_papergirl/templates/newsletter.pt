@@ -7,6 +7,17 @@
 <body>
 <div metal:fill-slot="main-content">
 
+  <h3 tal:define="mail_template request.resolve_uid(context.email_template)">
+    <span class="text-muted" i18n:translate="">Mail template:</span>
+    <a tal:condition="mail_template"
+       href="${request.resource_url(mail_template)}">
+      ${mail_template.title}
+    </a>
+    <span tal:condition="not mail_template" i18n:translate="">
+      Template not found!
+    </span>
+  </h3>
+
   <h3>
     <span class="text-muted" i18n:translate="">Subject:</span>
     ${context.subject}
