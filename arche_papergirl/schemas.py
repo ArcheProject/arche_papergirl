@@ -79,9 +79,12 @@ class AddNewsletterSectionSchema(colander.Schema):
 
 
 @colander.deferred
-def current_users_email(node, kw):
+def current_users_email_set(node, kw):
     request = kw['request']
-    return getattr(request.profile, 'email', '')
+    email = getattr(request.profile, 'email', '')
+    if email:
+        return set([email])
+    return set()
 
 @colander.deferred
 def pick_list_widget(node, kw):
@@ -107,12 +110,17 @@ def pick_lists_widget(node, kw):
 #   return colander.OneOf([x.uid for x in get_email_lists(request)])
 
 
-class SendSingleRecipient(colander.Schema):
-    email = colander.SchemaNode(
-        colander.String(),
-        title = _("Email"),
-        default = current_users_email,
-        validator = colander.Email()
+class SendTestEmailSchema(colander.Schema):
+    emails = colander.SchemaNode(
+        colander.Sequence(),
+        colander.SchemaNode(
+            colander.String(),
+            name = 'foo',
+            title = _("Email"),
+            validator = colander.Email(),
+        ),
+        title = _("Test recipients"),
+        default = current_users_email_set,
     )
 
 
@@ -274,7 +282,7 @@ def includeme(config):
     config.add_content_schema('Newsletter', NewsletterSchema, ('add', 'edit'))
     config.add_content_schema('NewsletterSection', NewsletterSectionSchema, 'edit')
     config.add_content_schema('NewsletterSection', AddNewsletterSectionSchema, 'add')
-    config.add_content_schema('Newsletter', SendSingleRecipient, 'send_single')
+    config.add_content_schema('Newsletter', SendTestEmailSchema, 'send_test')
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))
     config.add_content_schema('EmailListTemplate', EmailListTemplateSchema, ('add', 'edit', 'view'))

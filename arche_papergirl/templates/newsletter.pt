@@ -183,7 +183,7 @@
     <div class="tab-pane" id="test_tab">
       <div class="panel panel-default">
         <div class="panel-body">
-          ${structure: send_single_form}
+          ${structure: send_test_form}
         </div>
       </div>
     </div>

@@ -5,15 +5,15 @@ import deform
 from arche.interfaces import IFile
 from arche.security import NO_PERMISSION_REQUIRED
 from arche.security import PERM_EDIT
+from arche.views.file import AddFileForm
+from arche.views.base import BaseForm
 from arche.views.base import BaseView
 from arche.views.base import DefaultAddForm
-from arche.views.base import BaseForm
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from arche.views.file import AddFileForm
 
 from arche_papergirl import _
 from arche_papergirl.exceptions import AlreadyInQueueError
@@ -36,16 +36,16 @@ class NewsletterView(BaseView):
         AddSectionForm(self.context, self.request)()
         sections = [x for x in self.context.values() if INewsletterSection.providedBy(x)]
         attachments = [x for x in self.context.values() if IFile.providedBy(x)]
-        single_form = SendSingleSubForm(self.context, self.request)()
+        send_test_form = SendTestSubForm(self.context, self.request)()
         to_list_form = SendToListSubForm(self.context, self.request)()
-        for subform in (single_form, to_list_form):
+        for subform in (send_test_form, to_list_form):
             if isinstance(subform, Exception):
                 if isinstance(subform, HTTPFound):
                     return subform
                 raise subform
         return {'sections': sections,
                 'attachments': attachments,
-                'send_single_form': single_form['form'],
+                'send_test_form': send_test_form['form'],
                 'send_to_list_form': to_list_form['form']}
 
     @view_config(name = 'manual_send.json', renderer='json')
@@ -93,31 +93,34 @@ def preview_view(context, request):
     return Response(render_newsletter(request, context, subscriber, email_list, tpl))
 
 
-class SendSingleSubForm(BaseForm):
-    schema_name = "send_single"
+class SendTestSubForm(BaseForm):
+    schema_name = "send_test"
     type_name = "Newsletter"
-    title = _("Send to single recipient")
-    formid = 'deform-send-single'
+    title = _("Send test email")
+    formid = 'deform-test-email'
     #Important - make sure button names are unique since all forms will execute otherwise
-    buttons = (deform.Button('send_single', title = _("Send")),)
+    buttons = (deform.Button('send_test', title = _("Send")),)
 
     @property
     def form_options(self):
-        options = super(SendSingleSubForm, self).form_options
+        options = super(SendTestSubForm, self).form_options
         options['action'] = self.request.resource_url(self.context, anchor='test_tab')
         return options
 
-    def send_single_success(self, appstruct):
+    def send_test_success(self, appstruct):
         email_template = self.request.resolve_uid(self.context.email_template)
-        subscriber = self.request.content_factories['ListSubscriber'](
-            email = appstruct['email'],
-            token = "TEST",
-        )
         email_list = self.request.content_factories['EmailList'](
             title = self.request.localizer.translate(_("(Test list title)"))
         )
-        deliver_newsletter(self.request, self.context, subscriber, email_list, email_template)
-        self.flash_messages.add(self.default_success, type='success')
+        for email in appstruct['emails']:
+            subscriber = self.request.content_factories['ListSubscriber'](
+                email = email,
+                token = "TEST",
+            )
+            deliver_newsletter(self.request, self.context, subscriber, email_list, email_template)
+        msg = _("Sent ${num} test emails",
+                mapping = {'num': len(appstruct['emails'])})
+        self.flash_messages.add(msg, type='success')
         return HTTPFound(location=self.request.resource_url(self.context))
 
 
