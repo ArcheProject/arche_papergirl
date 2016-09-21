@@ -47,7 +47,7 @@ class PostOfficeView(BaseView):
             "type_name == 'Newsletter' and path == '%s'" % path,
             resolve=True,
             sort_index='created',
-            limit = 10,
+            limit=5,
             reverse=True
         )
         return response
