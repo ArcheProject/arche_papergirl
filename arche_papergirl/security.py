@@ -3,7 +3,6 @@ from arche.security import ROLE_VIEWER
 from arche.security import ROLE_EDITOR
 from arche.security import PERM_VIEW
 from arche.security import PERM_EDIT
-from arche.security import PERM_DELETE
 from pyramid.security import ALL_PERMISSIONS
 
 from arche_papergirl import _
@@ -17,7 +16,6 @@ PERM_VIEW_SUBSCRIBERS = 'View list subscribers'
 
 
 def includeme(config):
-    #config.register_roles(ROLE_NEWSLETTER_MANAGER, ROLE_NEWSLETTER_EDITOR)
     # ACL
     aclreg = config.registry.acl
     post_office_acl = aclreg.new_acl('PostOffice', title=_("Post Office"))
@@ -28,6 +26,3 @@ def includeme(config):
                                       PERM_VIEW_SUBSCRIBERS,
                                       PERM_MANAGE_SUBSCRIBERS])
     post_office_acl.add(ROLE_VIEWER, [PERM_VIEW, PERM_VIEW_SUBSCRIBERS])
-    #post_office_acl.add()
-    #post_office_acl.add(ROLE_NEWSLETTER_MANAGER, _manager_perms)
-    #post_office_acl.add(ROLE_NEWSLETTER_EDITOR, _nl_editor_perms)
