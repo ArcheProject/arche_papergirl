@@ -126,8 +126,8 @@
       <div class="panel panel-default">
         <div class="panel-body">
           Active:
-          Queue: <span data-pending data-to-process>${context.queue_len}</span>
-          Completed: <span data-completed>${context.queue_len}</span>
+          Queue: <span data-pending data-orig-value="${context.queue_len}">${context.queue_len}</span>
+          Completed: <span data-completed>0</span>
 
           <tal:queue condition="context.queue_len">
             <div class="progress">

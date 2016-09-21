@@ -55,10 +55,11 @@ function send_to_list(event) {
 
 function update_progress(curr_pending) {
     var orig_elem = $('[data-pending]');
-    var orig_value = parseInt(orig_elem.data('to-process'));
+    var orig_value = parseInt(orig_elem.data('orig-value'));
     var progress_elem = $('[data-progress]');
-    progress_elem.css({'width': Math.floor(((orig_value - curr_pending) / orig_value) * 100) + '%'});
-    orig_elem.data('to-process', curr_pending);
+    progress_elem.css({'width': Math.floor(((orig_value-curr_pending) / orig_value) * 100) + '%'});
+    orig_elem.html(curr_pending);
+    $('[data-completed]').html(orig_value-curr_pending);
 }
 
 
