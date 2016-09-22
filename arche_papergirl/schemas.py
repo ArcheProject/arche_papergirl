@@ -58,23 +58,16 @@ class NewsletterSectionSchema(colander.Schema):
         widget = deform.widget.RichTextWidget(height = 300),
         missing = ""
     )
-    # image_uid = colander.SchemaNode(colander.String(),
-    #                            title = _("Image"),
-    #                            widget = deform.widget.RichTextWidget(height = 300),
-    #                            missing = "")
-    # image_scale = colander.SchemaNode(colander.String(),
-    #                            title = _("Text"),
-    #                            widget = deform.widget.RichTextWidget(height = 300),
-    #                            missing = "")
 
-class AddNewsletterSectionSchema(colander.Schema):
-    from_uid = colander.SchemaNode(
-        colander.String(),
-        title = _("Populate from this"),
-        description = _("Leave it empty to create an empty section"),
-        missing = "",
-        widget = ReferenceWidget(multiple=False),
-    )
+
+# class AddNewsletterSectionSchema(colander.Schema):
+#     from_uid = colander.SchemaNode(
+#         colander.String(),
+#         title = _("Populate from this"),
+#         description = _("Leave it empty to create an empty section"),
+#         missing = "",
+#         widget = ReferenceWidget(multiple=False),
+#     )
     #Fetch image here and save scale + uid?
 
 
@@ -280,8 +273,8 @@ class ManageUnsubscribeSchema(colander.Schema):
 
 def includeme(config):
     config.add_content_schema('Newsletter', NewsletterSchema, ('add', 'edit'))
-    config.add_content_schema('NewsletterSection', NewsletterSectionSchema, 'edit')
-    config.add_content_schema('NewsletterSection', AddNewsletterSectionSchema, 'add')
+    config.add_content_schema('NewsletterSection', NewsletterSectionSchema, ('edit', 'add'))
+    #config.add_content_schema('NewsletterSection', AddNewsletterSectionSchema, 'add')
     config.add_content_schema('Newsletter', SendTestEmailSchema, 'send_test')
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))

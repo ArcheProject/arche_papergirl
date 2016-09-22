@@ -6,7 +6,6 @@ from BTrees.OOBTree import OOBTree
 from arche.api import Base
 from arche.api import Content
 from arche.utils import utcnow
-from arche_papergirl.security import PERM_ADD_NEWSLETTER
 from six import string_types
 from zope.interface import implementer
 
@@ -14,6 +13,8 @@ from arche_papergirl import _
 from arche_papergirl.exceptions import AlreadyInQueueError
 from arche_papergirl.interfaces import INewsletter
 from arche_papergirl.interfaces import INewsletterSection
+from arche_papergirl.security import PERM_ADD_NEWSLETTER
+from arche_papergirl.security import PERM_ADD_NEWSLETTER_SECTION
 
 
 @implementer(INewsletter)
@@ -125,6 +126,7 @@ class NewsletterSection(Base):
     type_name = "NewsletterSection"
     type_title = _("NewsletterSection")
     naming_attr = 'uid'
+    add_permission = PERM_ADD_NEWSLETTER_SECTION
     title = ""
     body = ""
 

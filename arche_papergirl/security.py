@@ -9,6 +9,7 @@ from arche_papergirl import _
 
 
 PERM_ADD_NEWSLETTER = 'Add Newsletter'
+PERM_ADD_NEWSLETTER_SECTION = 'Add Newsletter section'
 PERM_ADD_EMAIL_LIST = 'Add Email list'
 PERM_ADD_TEMPLATE = 'Add Email list template'
 PERM_MANAGE_SUBSCRIBERS = 'Manage list subscribers'

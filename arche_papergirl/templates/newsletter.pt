@@ -89,9 +89,8 @@
   </div>
 
   <p>
-    <a href="${request.resource_url(context, 'add', query = {'content_type': 'NewsletterSection'})}"
-      class="btn btn-success"
-      data-replace-target="#inline_edit">
+    <a href="${request.resource_url(context, 'quick_add')}"
+      class="btn btn-success">
       <span class="glyphicon glyphicon-plus"></span>
       <span i18n:translate="">Section</span>
     </a>

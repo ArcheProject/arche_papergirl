@@ -23,6 +23,7 @@ from arche_papergirl.interfaces import INewsletter
 from arche_papergirl.interfaces import INewsletterSection
 from arche_papergirl.utils import deliver_newsletter
 from arche_papergirl.utils import render_newsletter
+from arche_papergirl.security import PERM_ADD_NEWSLETTER_SECTION
 
 
 @view_defaults(context = INewsletter, permission = PERM_EDIT)
@@ -33,7 +34,6 @@ class NewsletterView(BaseView):
         paper_manage.need()
         #Autoneed fetches css/js dependencies if we initialize the forms here
         InlineAddFileForm(self.context, self.request)()
-        AddSectionForm(self.context, self.request)()
         sections = [x for x in self.context.values() if INewsletterSection.providedBy(x)]
         attachments = [x for x in self.context.values() if IFile.providedBy(x)]
         send_test_form = SendTestSubForm(self.context, self.request)()
@@ -151,26 +151,37 @@ class SendToListSubForm(BaseForm):
         return HTTPFound(location=self.request.resource_url(self.context))
 
 
+# @view_config(context = INewsletter,
+#              name = 'add',
+#              request_param="content_type=NewsletterSection",
+#              permission = NO_PERMISSION_REQUIRED,
+#              renderer = 'arche:templates/form.pt')
+# class AddSectionForm(DefaultAddForm):
+#     type_name = 'NewsletterSection'
+#     use_ajax = True
+#
+#     def save_success(self, appstruct):
+#         #FIXME: populate from referenced, or create blank
+#         section_appstruct = {}
+#         res = super(AddSectionForm, self).save_success(section_appstruct)
+#         if isinstance(res, HTTPFound) and self.request.is_xhr:
+#             return self.relocate_response(res.location, msg = "")
+#         return res
+#
+#     def cancel(self, *args):
+#         return  self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
+#     cancel_success = cancel_failure = cancel
+
+
 @view_config(context = INewsletter,
-             name = 'add',
-             request_param="content_type=NewsletterSection",
-             permission = NO_PERMISSION_REQUIRED,
-             renderer = 'arche:templates/form.pt')
-class AddSectionForm(DefaultAddForm):
-    type_name = 'NewsletterSection'
-    use_ajax = True
+             name = 'quick_add',
+             permission = PERM_ADD_NEWSLETTER_SECTION)
+class QuickAddSection(BaseView):
 
-    def save_success(self, appstruct):
-        #FIXME: populate from referenced, or create blank
-        section_appstruct = {}
-        res = super(AddSectionForm, self).save_success(section_appstruct)
-        if isinstance(res, HTTPFound) and self.request.is_xhr:
-            return self.relocate_response(res.location, msg = "")
-        return res
-
-    def cancel(self, *args):
-        return  self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
-    cancel_success = cancel_failure = cancel
+    def __call__(self):
+        obj = self.request.content_factories['NewsletterSection']()
+        self.context[obj.uid] = obj
+        return HTTPFound(self.request.resource_url(self.context))
 
 
 @view_config(context = INewsletter,
