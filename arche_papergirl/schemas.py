@@ -60,17 +60,6 @@ class NewsletterSectionSchema(colander.Schema):
     )
 
 
-# class AddNewsletterSectionSchema(colander.Schema):
-#     from_uid = colander.SchemaNode(
-#         colander.String(),
-#         title = _("Populate from this"),
-#         description = _("Leave it empty to create an empty section"),
-#         missing = "",
-#         widget = ReferenceWidget(multiple=False),
-#     )
-    #Fetch image here and save scale + uid?
-
-
 @colander.deferred
 def current_users_email_set(node, kw):
     request = kw['request']
@@ -271,10 +260,37 @@ class ManageUnsubscribeSchema(colander.Schema):
     )
 
 
+@colander.deferred
+def pop_description(node, kw):
+    section_populator = kw['section_populator']
+    request = kw['request']
+    transl = request.localizer.translate
+    types_list = []
+    for type_name in section_populator.for_types:
+        types_list.append(transl(request.content_factories[type_name].type_title))
+    return _("Must be one of these types: ${types}",
+             mapping = {'types': ", ".join(types_list)})
+
+@colander.deferred
+def pop_widget(node, kw):
+    section_populator = kw['section_populator']
+    return ReferenceWidget(multiple=False, query_params = {'type_name': section_populator.for_types})
+
+
+class BasePopulateNewsletterSectionSchema(colander.Schema):
+
+    from_uid = colander.SchemaNode(
+        colander.String(),
+        title = _("Populate from this content - make sure it's public!"),
+        description = pop_description,
+        widget = pop_widget,
+    )
+
+
 def includeme(config):
     config.add_content_schema('Newsletter', NewsletterSchema, ('add', 'edit'))
     config.add_content_schema('NewsletterSection', NewsletterSectionSchema, ('edit', 'add'))
-    #config.add_content_schema('NewsletterSection', AddNewsletterSectionSchema, 'add')
+    config.add_content_schema('NewsletterSection', BasePopulateNewsletterSectionSchema, 'section_populator')
     config.add_content_schema('Newsletter', SendTestEmailSchema, 'send_test')
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))

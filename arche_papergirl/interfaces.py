@@ -3,6 +3,7 @@ from arche.interfaces import IContent
 from arche.interfaces import IIndexedContent
 from arche.interfaces import IThumbnailedContent
 from zope.interface import Attribute
+from zope.interface import Interface
 
 
 class IEmailList(IContent):
@@ -95,3 +96,8 @@ class IPostOffice(IContent):
     """
     subscribers = Attribute("Shortcut to the IListSubscribers object that's "
                             "always stored within a PostOffice")
+
+
+class ISectionPopulatorUtil(Interface):
+    """ Utility that populates newsletter sections.
+    """

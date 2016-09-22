@@ -50,14 +50,19 @@
       </div>
       <h3 tal:condition="obj.title" class="media-heading">${obj.title}</h3>
       <div tal:condition="obj.body">${structure: obj.body}</div>
-      <div tal:condition="not obj.body"
-           class="text-muted"
-           i18n:translate="">No text yet...</div>
+      <div tal:condition="not obj.body">
+        <span class="text-muted" i18n:translate="">No text yet! Populate section with</span>
+        <span></span>
+        <tal:iter repeat="populator view.get_populators()">
+          <a href="${populator.url(obj, request)}">
+          ${populator.title}
+          </a>
+        </tal:iter>
+      </div>
     </div>
   </div>
 
   <div class="list-group">
-
     <div class="list-group-item" tal:repeat="obj attachments">
       <div class="dropdown pull-right">
         <a href="${request.resource_url(obj, 'edit')}"

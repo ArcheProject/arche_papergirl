@@ -19,11 +19,13 @@ from arche_papergirl import _
 from arche_papergirl.exceptions import AlreadyInQueueError
 from arche_papergirl.fanstatic_lib import paper_manage
 from arche_papergirl.interfaces import IEmailListTemplate
+from arche_papergirl.interfaces import ISectionPopulatorUtil
 from arche_papergirl.interfaces import INewsletter
 from arche_papergirl.interfaces import INewsletterSection
 from arche_papergirl.utils import deliver_newsletter
 from arche_papergirl.utils import render_newsletter
 from arche_papergirl.security import PERM_ADD_NEWSLETTER_SECTION
+from zope.interface.interfaces import ComponentLookupError
 
 
 @view_defaults(context = INewsletter, permission = PERM_EDIT)
@@ -47,6 +49,9 @@ class NewsletterView(BaseView):
                 'attachments': attachments,
                 'send_test_form': send_test_form['form'],
                 'send_to_list_form': to_list_form['form']}
+
+    def get_populators(self):
+        return self.request.registry.getAllUtilitiesRegisteredFor(ISectionPopulatorUtil)
 
     @view_config(name = 'manual_send.json', renderer='json')
     def manual_send(self):
@@ -150,6 +155,37 @@ class SendToListSubForm(BaseForm):
         self.flash_messages.add(msg, type=type_status)
         return HTTPFound(location=self.request.resource_url(self.context))
 
+
+@view_config(context=INewsletterSection,
+             name='populate',
+             permission=PERM_EDIT,
+             renderer='arche:templates/form.pt')
+class PopulateSectionForm(BaseForm):
+    type_name = 'NewsletterSection'
+    use_ajax = True
+    buttons = (BaseForm.button_add, BaseForm.button_cancel)
+
+    @property
+    def populator(self):
+        name = self.request.GET.get('pop', '')
+        try:
+            return self.request.registry.getUtility(ISectionPopulatorUtil, name = name)
+        except ComponentLookupError:
+            raise HTTPNotFound("No populator called %r" % name)
+
+    def get_schema(self):
+        return self.populator.get_schema(self.context, self.request)
+
+    def add_success(self, appstruct):
+        #FIXME: populate from referenced, or create blank
+        obj = self.request.resolve_uid(appstruct.pop('from_uid'))
+        html = self.populator.render(obj, self.request, **appstruct)
+        self.context.update(body = html)
+        return self.relocate_response(self.request.resource_url(self.context.__parent__), msg = self.default_success)
+
+    def cancel(self, *args):
+        return self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
+    cancel_success = cancel_failure = cancel
 
 # @view_config(context = INewsletter,
 #              name = 'add',
