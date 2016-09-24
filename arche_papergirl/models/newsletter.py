@@ -31,9 +31,10 @@ class Newsletter(Content):
     add_permission = "Add %s" % type_name
     css_icon = "glyphicon glyphicon-envelope"
     subject = ""
+    sender_email = ""
+    sender_name = ""
     email_template = ""
     add_permission = PERM_ADD_NEWSLETTER
-
 
     def __init__(self, **kw):
         super(Newsletter, self).__init__(**kw)
@@ -49,6 +50,17 @@ class Newsletter(Content):
             key = 1
         self._queue[key] = (subscriber_uid, list_uid)
         self.set_uid_status(subscriber_uid, key, list_uid)
+
+    @property
+    def sender(self):
+        """ Returns sender formatted either with only email, with email and name,
+            or None if sender_email isn't specified. None indicates that the default
+            configured sender should be used.
+        """
+        if self.sender_email:
+            if self.sender_name:
+                return "%s <%s>" % (self.sender_name, self.sender_email)
+            return self.sender_email
 
     @property
     def queue_len(self):

@@ -29,7 +29,7 @@ class RenderNewsletterTests(TestCase):
         subscriber = po['s']['subs']
         po['tpl'].body = "Hello ${name}"
         result = self._fut(request, po['newsletter'], subscriber, po['list'], po['tpl'], name = 'World')
-        self.assertEqual(result, "Hello World")
+        self.assertIn("Hello World", result)
 
     def test_render_default(self):
         self.config.include('pyramid_chameleon')

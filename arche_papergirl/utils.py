@@ -24,7 +24,8 @@ def deliver_newsletter(request, newsletter, subscriber, email_list, tpl):
     msg = request.compose_email(
         subject,
         [subscriber.email],
-        html
+        html,
+        sender=newsletter.sender,
     )
     create_attachments(newsletter, msg)
     mailer = get_mailer(request)

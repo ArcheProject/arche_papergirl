@@ -22,6 +22,13 @@ def pick_email_template(node, kw):
     return deform.widget.RadioChoiceWidget(values=values)
 
 
+@colander.deferred
+def sender_email_title(node, kw):
+    request = kw['request']
+    return _("Sender email address - leave empty to use system default: '${sys_default}'",
+             mapping = {'sys_default': request.registry.settings.get('mail.default_sender', '')})
+
+
 class NewsletterSchema(colander.Schema):
     title = colander.SchemaNode(
         colander.String(),
@@ -32,10 +39,18 @@ class NewsletterSchema(colander.Schema):
         colander.String(),
         title = _("Mail subject line"),
     )
-    description = colander.SchemaNode(
+    sender_email = colander.SchemaNode(
         colander.String(),
-        title = _("Lead-in or description, included in the letter"),
-        widget = deform.widget.TextAreaWidget(rows = 5),
+        title = sender_email_title,
+        missing = "",
+        validator = colander.Email(),
+    )
+    sender_name = colander.SchemaNode(
+        colander.String(),
+        title = _("Sender name"),
+        description = _("sender_name_description",
+                        default="If a custom sender email was specified, "
+                                "you may specify sender name here."),
         missing = "",
     )
     email_template = colander.SchemaNode(
@@ -270,6 +285,7 @@ def pop_description(node, kw):
         types_list.append(transl(request.content_factories[type_name].type_title))
     return _("Must be one of these types: ${types}",
              mapping = {'types': ", ".join(types_list)})
+
 
 @colander.deferred
 def pop_widget(node, kw):
