@@ -177,36 +177,14 @@ class PopulateSectionForm(BaseForm):
         return self.populator.get_schema(self.context, self.request)
 
     def add_success(self, appstruct):
-        #FIXME: populate from referenced, or create blank
-        obj = self.request.resolve_uid(appstruct.pop('from_uid'))
-        html = self.populator.render(obj, self.request, **appstruct)
+        html = self.populator.render(self.context, self.request, **appstruct)
         self.context.update(body = html)
-        return self.relocate_response(self.request.resource_url(self.context.__parent__), msg = self.default_success)
+        return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
+                                      msg = self.default_success)
 
     def cancel(self, *args):
         return self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
     cancel_success = cancel_failure = cancel
-
-# @view_config(context = INewsletter,
-#              name = 'add',
-#              request_param="content_type=NewsletterSection",
-#              permission = NO_PERMISSION_REQUIRED,
-#              renderer = 'arche:templates/form.pt')
-# class AddSectionForm(DefaultAddForm):
-#     type_name = 'NewsletterSection'
-#     use_ajax = True
-#
-#     def save_success(self, appstruct):
-#         #FIXME: populate from referenced, or create blank
-#         section_appstruct = {}
-#         res = super(AddSectionForm, self).save_success(section_appstruct)
-#         if isinstance(res, HTTPFound) and self.request.is_xhr:
-#             return self.relocate_response(res.location, msg = "")
-#         return res
-#
-#     def cancel(self, *args):
-#         return  self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
-#     cancel_success = cancel_failure = cancel
 
 
 @view_config(context = INewsletter,
@@ -217,7 +195,7 @@ class QuickAddSection(BaseView):
     def __call__(self):
         obj = self.request.content_factories['NewsletterSection']()
         self.context[obj.uid] = obj
-        return HTTPFound(self.request.resource_url(self.context))
+        return HTTPFound(self.request.resource_url(self.context, anchor=obj.uid))
 
 
 @view_config(context = INewsletter,

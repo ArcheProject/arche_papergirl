@@ -48,6 +48,7 @@
           <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
         </ul>
       </div>
+      <a name="${obj.uid}"><!-- --></a>
       <h3 tal:condition="obj.title" class="media-heading">${obj.title}</h3>
       <div tal:condition="obj.body">${structure: obj.body}</div>
       <div tal:condition="not obj.body">

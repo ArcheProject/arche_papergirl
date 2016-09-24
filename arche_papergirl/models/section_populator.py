@@ -14,7 +14,7 @@ class SectionPopulatorUtil(object):
     default_render_kw = {}
 
     def __init__(self, renderer,
-                 schema_name = 'section_populator',
+                 schema_name = 'section_populator_ref',
                  name = '',
                  title = 'Unnamed populator',
                  for_types = ()):
@@ -23,7 +23,6 @@ class SectionPopulatorUtil(object):
         assert name
         self.name = name
         self.title = title
-        assert for_types
         self.for_types = for_types
 
     def render(self, context, request, **kw):
@@ -40,13 +39,18 @@ class SectionPopulatorUtil(object):
         return request.get_schema(context, 'NewsletterSection', self.schema_name, bind=bind, event=True)
 
 
-def image_populator(context, request, alt='', width='100%', scale_name='col-12', **kw):
-    src = request.thumb_url(context, scale_name, key='file')
+def image_populator(context, request, alt='', width='100%', scale_name='col-12', from_uid = '', **kw):
+    image = request.resolve_uid(from_uid)
+    src = request.thumb_url(image, scale_name, key='file')
     return """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= src, alt=alt, width=width)
 
 
+def external_image_populator(context, request, src='', alt='', width='100%', url='', **kw):
+    return """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= url, alt=alt, width=width)
+
+
 def add_section_populator(config, renderer,
-                          schema_name = 'section_populator',
+                          schema_name = 'section_populator_ref',
                           name = '',
                           title = 'Unnamed populator',
                           for_types = (),):
@@ -58,9 +62,9 @@ def includeme(config):
     config.add_directive('add_section_populator', add_section_populator)
     config.add_section_populator(image_populator,
                                  name='image',
-                                 title=_("Image"),
+                                 title=_("Local image"),
                                  for_types=('Image',))
-
- #   def thumb_tag(request, context, scale_name, default=u"", extra_cls='', direction="thumb", key="image", **kw):
- #   def thumb_url(request, context, scale, key='image', direction='thumb'):
-
+    config.add_section_populator(external_image_populator,
+                                 name='external_image',
+                                 title=_("External image"),
+                                 schema_name='section_populator_external_url')

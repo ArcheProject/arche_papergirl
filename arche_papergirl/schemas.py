@@ -286,7 +286,6 @@ def pop_description(node, kw):
     return _("Must be one of these types: ${types}",
              mapping = {'types': ", ".join(types_list)})
 
-
 @colander.deferred
 def pop_widget(node, kw):
     section_populator = kw['section_populator']
@@ -303,10 +302,19 @@ class BasePopulateNewsletterSectionSchema(colander.Schema):
     )
 
 
+class ExternalSectionPopulatorSchema(colander.Schema):
+    url = colander.SchemaNode(
+        colander.String(),
+        title = _("External image url"),
+        validator = colander.url,
+    )
+
+
 def includeme(config):
     config.add_content_schema('Newsletter', NewsletterSchema, ('add', 'edit'))
     config.add_content_schema('NewsletterSection', NewsletterSectionSchema, ('edit', 'add'))
-    config.add_content_schema('NewsletterSection', BasePopulateNewsletterSectionSchema, 'section_populator')
+    config.add_content_schema('NewsletterSection', BasePopulateNewsletterSectionSchema, 'section_populator_ref')
+    config.add_content_schema('NewsletterSection', ExternalSectionPopulatorSchema, 'section_populator_external_url')
     config.add_content_schema('Newsletter', SendTestEmailSchema, 'send_test')
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))
