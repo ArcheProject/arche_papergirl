@@ -80,7 +80,9 @@
         <ul class = "list-group">
           <li class = "list-group-item" tal:repeat="obj latest_newsletters">
             <a href="${request.resource_url(obj)}">${obj.title}</a>
-            <span class="pull-right text-muted">${request.dt_handler.format_dt(obj.created)}</span>
+            <div class="text-right text-muted">
+              <small>${request.dt_handler.format_dt(obj.created)}</small>
+            </div>
           </li>
         </ul>
       </div>
