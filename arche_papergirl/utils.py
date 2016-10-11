@@ -5,7 +5,8 @@ from pyramid.traversal import find_interface
 from pyramid.traversal import resource_path
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Attachment
-from premailer import transform
+from premailer import Premailer
+from pyramid.path import AssetResolver
 
 from arche_papergirl.interfaces import IEmailList, IPostOffice
 from arche_papergirl.interfaces import IEmailListTemplate
@@ -42,7 +43,7 @@ def create_attachments(newsletter, msg):
                 msg.attach(attachment)
 
 
-def render_newsletter(request, newsletter, subscriber, email_list, email_template, premailer = transform, **kwargs):
+def render_newsletter(request, newsletter, subscriber, email_list, email_template, use_premailer = True, **kwargs):
     assert INewsletter.providedBy(newsletter)
     assert IListSubscriber.providedBy(subscriber)
     assert IEmailList.providedBy(email_list)
@@ -57,9 +58,35 @@ def render_newsletter(request, newsletter, subscriber, email_list, email_templat
     )
     #FIXME: Encoding, translation?
     html = page_tpl.render(**tpl_values)
-    if premailer:
-        html = premailer(html, base_url=request.host_url)
+    filenames = request.registry.settings.get('papergirl.mail_css', ())
+    html = inject_css_from_files(email_template, filenames, html,
+                                 debug = request.registry.settings.get('arche.debug', False))
+    if use_premailer:
+        html = Premailer(html, base_url=request.host_url, keep_style_tags=True).transform()
     return html
+
+
+_INJECT_TPL = """
+<head>
+<style type="text/css">
+%s
+</style>
+"""
+
+def inject_css_from_files(email_template, filenames, html, debug = False):
+    css_out = ""
+    resolver = AssetResolver()
+    for relpath in filenames:
+        resolved = resolver.resolve(relpath)
+        abspath = resolved.abspath()
+        if debug:
+            css_out += "\n/* START %s */\n\n" % relpath
+        with open(abspath, 'r') as fb:
+            css_out += fb.read()
+        if debug:
+            css_out += "\n\n/* END %s */\n\n" % relpath
+    out = _INJECT_TPL % css_out
+    return html.replace('<head>', out)
 
 
 def get_po_objs(context, request, type_name, perm = PERM_VIEW, sort_index = 'sortable_title', **kw):

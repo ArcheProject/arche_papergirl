@@ -101,11 +101,6 @@ def pick_lists_widget(node, kw):
         values.append((obj.uid, obj.title,))
     return deform.widget.CheckboxChoiceWidget(values=values)
 
-#@colander.deferred
-#def pick_list_validator(node, kw):
-#    request = kw['request']
-#   return colander.OneOf([x.uid for x in get_email_lists(request)])
-
 
 class SendTestEmailSchema(colander.Schema):
     emails = colander.SchemaNode(
@@ -144,14 +139,17 @@ class MailTemplateValidator(object):
         self.request = kw['request']
 
     def __call__(self, node, value):
+        must_tags = ['<body>', '<head>', '<html>']
+        for tag in must_tags:
+            if tag not in value:
+                raise colander.Invalid(node, _("The ${tag}-tag is required in the template.",
+                                               mapping = {'tag': tag}))
         newsletter, subscriber, email_list = get_mock_structure(self.request)
         email_list_template = self.request.content_factories['EmailListTemplate'](body = value)
         try:
             render_newsletter(self.request, newsletter, subscriber, email_list, email_list_template)
         except Exception as exc:
-            print exc
             raise colander.Invalid(node, str(exc))
-
 
 
 class EmailListSchema(colander.Schema):
@@ -159,6 +157,15 @@ class EmailListSchema(colander.Schema):
         colander.String(),
         title = _("List title"),
     )
+
+
+@colander.deferred
+def css_files_widget(node, kw):
+    request = kw['request']
+    values = []
+    for x in request.registry.settings.get('papergirl.mail_css', ()):
+        values.append((x, x))
+    return deform.widget.CheckboxChoiceWidget(values = values)
 
 
 class EmailListTemplateSchema(colander.Schema):
@@ -178,10 +185,15 @@ class EmailListTemplateSchema(colander.Schema):
         title = _("Mail template"),
         #FIXME
         #description = ""
-        widget = deform.widget.TextAreaWidget(rows=10),
+        widget = deform.widget.TextAreaWidget(rows=15),
         default = default_mail_template,
         missing = default_mail_template,
         validator = MailTemplateValidator,
+    )
+    include_css = colander.SchemaNode(
+        colander.List(),
+        title = _("Include style sheets"),
+        widget = css_files_widget,
     )
 
 
@@ -285,6 +297,7 @@ def pop_description(node, kw):
         types_list.append(transl(request.content_factories[type_name].type_title))
     return _("Must be one of these types: ${types}",
              mapping = {'types': ", ".join(types_list)})
+
 
 @colander.deferred
 def pop_widget(node, kw):

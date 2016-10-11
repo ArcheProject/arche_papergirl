@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from arche.api import Content
 from arche_papergirl.security import PERM_ADD_TEMPLATE
+from persistent.list import PersistentList
 from zope.interface import implementer
 
 from arche_papergirl import _
@@ -21,6 +22,14 @@ class EmailListTemplate(Content):
     css_icon = "glyphicon glyphicon-duplicate"
     add_permission = PERM_ADD_TEMPLATE
     body = ""
+    _include_css = ()
+
+    @property
+    def include_css(self):
+        return list(self._include_css)
+    @include_css.setter
+    def include_css(self, value):
+        self._include_css = PersistentList(value)
 
 
 def includeme(config):
