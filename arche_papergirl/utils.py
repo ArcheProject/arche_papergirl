@@ -1,3 +1,4 @@
+import re
 from arche.interfaces import IFile, IBlobs
 from arche.security import PERM_VIEW
 from chameleon.zpt.template import PageTemplate
@@ -67,7 +68,6 @@ def render_newsletter(request, newsletter, subscriber, email_list, email_templat
 
 
 _INJECT_TPL = """
-<head>
 <style type="text/css">
 %s
 </style>
@@ -86,7 +86,14 @@ def inject_css_from_files(email_template, filenames, html, debug = False):
         if debug:
             css_out += "\n\n/* END %s */\n\n" % relpath
     out = _INJECT_TPL % css_out
-    return html.replace('<head>', out)
+
+    #Find the head tag
+    pattern = re.compile("<head[^>]*>", flags=re.IGNORECASE)
+    head_tag_list = pattern.findall(html)
+    if len(head_tag_list) != 1:
+        raise ValueError("Head tag not found")
+    out = "%s\n%s" % (head_tag_list[0], out)
+    return html.replace(head_tag_list[0], out)
 
 
 def get_po_objs(context, request, type_name, perm = PERM_VIEW, sort_index = 'sortable_title', **kw):

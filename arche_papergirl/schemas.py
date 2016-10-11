@@ -1,5 +1,6 @@
 import colander
 import deform
+import re
 from arche.widgets import ReferenceWidget
 from arche_papergirl.validators import multiple_email_validator
 from pyramid.renderers import render
@@ -139,9 +140,12 @@ class MailTemplateValidator(object):
         self.request = kw['request']
 
     def __call__(self, node, value):
-        must_tags = ['<body>', '<head>', '<html>']
+        must_tags = ['body', 'head', 'html']
+
         for tag in must_tags:
-            if tag not in value:
+            text = "<%s[^>]*>" % tag
+            pattern = re.compile(text, flags=re.IGNORECASE)
+            if not pattern.findall(value):
                 raise colander.Invalid(node, _("The ${tag}-tag is required in the template.",
                                                mapping = {'tag': tag}))
         newsletter, subscriber, email_list = get_mock_structure(self.request)
