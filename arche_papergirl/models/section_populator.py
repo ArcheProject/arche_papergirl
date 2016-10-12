@@ -1,3 +1,4 @@
+import colander
 from zope.interface import implementer
 
 from arche_papergirl.interfaces import ISectionPopulatorUtil
@@ -14,7 +15,7 @@ class SectionPopulatorUtil(object):
     default_render_kw = {}
 
     def __init__(self, renderer,
-                 schema_name = 'section_populator_ref',
+                 schema_name = None,
                  name = '',
                  title = 'Unnamed populator',
                  for_types = ()):
@@ -35,6 +36,8 @@ class SectionPopulatorUtil(object):
         return request.resource_url(context, 'populate', query = {'pop': self.name})
 
     def get_schema(self, context, request):
+        if not self.schema_name:
+            return colander.Schema()
         bind = {'context': context, 'request': request, 'section_populator': self}
         return request.get_schema(context, 'NewsletterSection', self.schema_name, bind=bind, event=True)
 
@@ -63,6 +66,7 @@ def includeme(config):
     config.add_section_populator(image_populator,
                                  name='image',
                                  title=_("Local image"),
+                                 schema_name='section_populator_ref',
                                  for_types=('Image',))
     config.add_section_populator(external_image_populator,
                                  name='external_image',
