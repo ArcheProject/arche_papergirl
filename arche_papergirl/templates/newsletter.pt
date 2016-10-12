@@ -45,7 +45,15 @@
           <span class="glyphicon glyphicon-cog"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${obj.uid}">
-          <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
+          <li>
+            <a href="${request.resource_url(obj, 'delete')}"
+               i18n:translate="">Delete</a>
+          </li>
+          <li>
+            <a href="${request.resource_url(obj, 'reset')}"
+               tal:condition="request.registry.settings.get('arche.debug', False)"
+               i18n:translate="">Reset</a>
+          </li>
         </ul>
       </div>
       <a name="${obj.uid}"><!-- --></a>
@@ -78,7 +86,10 @@
           <span class="glyphicon glyphicon-cog"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${obj.uid}">
-          <li><a href="${request.resource_url(obj, 'delete')}">Delete</a></li>
+          <li>
+            <a href="${request.resource_url(obj, 'delete')}"
+               i18n:translate="">Delete</a>
+          </li>
         </ul>
       </div>
       <h3 class="media-heading">

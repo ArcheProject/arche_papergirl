@@ -8,7 +8,7 @@ from arche.security import PERM_EDIT
 from arche.views.file import AddFileForm
 from arche.views.base import BaseForm
 from arche.views.base import BaseView
-from arche.views.base import DefaultAddForm
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
@@ -177,6 +177,10 @@ class PopulateSectionForm(BaseForm):
         return self.populator.get_schema(self.context, self.request)
 
     def add_success(self, appstruct):
+        if self.request.registry.settings.get('arche.debug', False):
+            #Only reasonable to enable this functionality if arche is in debug mode
+            self.context.populator_appstruct = appstruct
+            self.context.populator_name = self.populator.name
         html = self.populator.render(self.context, self.request, **appstruct)
         self.context.update(body = html)
         return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
@@ -185,6 +189,21 @@ class PopulateSectionForm(BaseForm):
     def cancel(self, *args):
         return self.relocate_response(self.request.resource_url(self.context), msg = self.default_cancel)
     cancel_success = cancel_failure = cancel
+
+
+@view_config(context=INewsletterSection,
+             name='reset',
+             permission=PERM_EDIT)
+class ResetSectionView(BaseView):
+
+    def __call__(self):
+        if not self.context.populator_name:
+            raise HTTPForbidden("No populator info stored")
+        populator = self.request.registry.getUtility(ISectionPopulatorUtil, name=self.context.populator_name)
+        html = populator.render(self.context, self.request, **self.context.populator_appstruct)
+        self.context.update(body = html)
+        return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
+                                      msg = _("Reset to initial state"))
 
 
 @view_config(context = INewsletter,

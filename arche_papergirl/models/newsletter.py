@@ -141,6 +141,14 @@ class NewsletterSection(Base):
     add_permission = PERM_ADD_NEWSLETTER_SECTION
     title = ""
     body = ""
+    populator_name = ''
+
+    @property
+    def populator_appstruct(self):
+        return dict(getattr(self, '_populator_appstruct', {}))
+    @populator_appstruct.setter
+    def populator_appstruct(self, value):
+        self._populator_appstruct = OOBTree(value)
 
 
 def includeme(config):
