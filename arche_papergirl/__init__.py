@@ -28,6 +28,8 @@ def check_and_convert_css(config):
     resolver = AssetResolver()
     assets = []
     for relpath in settings.get('papergirl.mail_css', '').splitlines():
+        if not relpath:
+            continue
         resolved = resolver.resolve(relpath)
         abspath = resolved.abspath()
         if isfile(abspath):
