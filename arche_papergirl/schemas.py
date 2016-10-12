@@ -199,6 +199,11 @@ class EmailListTemplateSchema(colander.Schema):
         title = _("Include style sheets"),
         widget = css_files_widget,
     )
+    use_premailer = colander.SchemaNode(
+        colander.Bool(),
+        title = _("Use Premailer inliner"),
+        default = True,
+    )
 
 
 @colander.deferred

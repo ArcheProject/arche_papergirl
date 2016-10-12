@@ -44,7 +44,7 @@ def create_attachments(newsletter, msg):
                 msg.attach(attachment)
 
 
-def render_newsletter(request, newsletter, subscriber, email_list, email_template, use_premailer = True, **kwargs):
+def render_newsletter(request, newsletter, subscriber, email_list, email_template, **kwargs):
     assert INewsletter.providedBy(newsletter)
     assert IListSubscriber.providedBy(subscriber)
     assert IEmailList.providedBy(email_list)
@@ -62,7 +62,7 @@ def render_newsletter(request, newsletter, subscriber, email_list, email_templat
     filenames = request.registry.settings.get('papergirl.mail_css', ())
     html = inject_css_from_files(email_template, filenames, html,
                                  debug = request.registry.settings.get('arche.debug', False))
-    if use_premailer:
+    if email_template.use_premailer:
         html = Premailer(html, base_url=request.host_url, keep_style_tags=True).transform()
     return html
 

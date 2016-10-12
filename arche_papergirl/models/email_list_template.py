@@ -22,6 +22,7 @@ class EmailListTemplate(Content):
     css_icon = "glyphicon glyphicon-duplicate"
     add_permission = PERM_ADD_TEMPLATE
     body = ""
+    use_premailer = True
     _include_css = ()
 
     @property
