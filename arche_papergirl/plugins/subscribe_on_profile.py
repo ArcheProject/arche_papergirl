@@ -56,34 +56,34 @@
 #
 
 
-
-def _subscriber_subscribe_on_profile(schema, event):
-    valid_lists = []
-
-    for obj in get_email_lists(event.request):
-        if obj.subscribe_on_profile == True:
-            valid_lists.append(obj)
-
-    if not valid_lists:
-        return
-    values = [(obj.uid, obj.title) for obj in valid_lists]
-    schema.add(colander.SchemaNode(
-        colander.Set(),
-        name = '_email_list_subscriptions',
-        widget = deform.widget.CheckboxChoiceWidget(values = values)
-    ))
-
-
-def _list_option_for_profile(schema, event):
-    schema.add(colander.SchemaNode(
-        colander.Bool(),
-        name='subscribe_on_profile',
-        title=_("Show this list as a subscription option when a user registers or edits their profile?"),
-    ))
-
-
-
-def includeme(config):
-    config.add_subscriber(_subscriber_subscribe_on_profile, [FinishRegistrationSchema, ISchemaCreatedEvent])
-    config.add_subscriber(_subscriber_subscribe_on_profile, [UserSchema, ISchemaCreatedEvent])
-    config.add_subscriber(_list_option_for_profile, [EmailListSchema, ISchemaCreatedEvent])
+#
+# def _subscriber_subscribe_on_profile(schema, event):
+#     valid_lists = []
+#
+#     for obj in get_email_lists(event.request):
+#         if obj.subscribe_on_profile == True:
+#             valid_lists.append(obj)
+#
+#     if not valid_lists:
+#         return
+#     values = [(obj.uid, obj.title) for obj in valid_lists]
+#     schema.add(colander.SchemaNode(
+#         colander.Set(),
+#         name = '_email_list_subscriptions',
+#         widget = deform.widget.CheckboxChoiceWidget(values = values)
+#     ))
+#
+#
+# def _list_option_for_profile(schema, event):
+#     schema.add(colander.SchemaNode(
+#         colander.Bool(),
+#         name='subscribe_on_profile',
+#         title=_("Show this list as a subscription option when a user registers or edits their profile?"),
+#     ))
+#
+#
+#
+# def includeme(config):
+#     config.add_subscriber(_subscriber_subscribe_on_profile, [FinishRegistrationSchema, ISchemaCreatedEvent])
+#     config.add_subscriber(_subscriber_subscribe_on_profile, [UserSchema, ISchemaCreatedEvent])
+#     config.add_subscriber(_list_option_for_profile, [EmailListSchema, ISchemaCreatedEvent])
