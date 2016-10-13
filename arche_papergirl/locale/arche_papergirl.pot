@@ -1,0 +1,430 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2016-10-13 15:59+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Generated-By: Lingua 4.5.1\n"
+
+#: ./arche_papergirl/./portlets.py:15 ./arche_papergirl/./portlets.py:46
+msgid "Subscribe maillist"
+msgstr ""
+
+#: ./arche_papergirl/./portlets.py:20
+msgid "Select..."
+msgstr ""
+
+#: ./arche_papergirl/./portlets.py:32 ./arche_papergirl/./schemas.py:38
+#: ./arche_papergirl/./schemas.py:278
+msgid "Title"
+msgstr ""
+
+#: ./arche_papergirl/./portlets.py:33
+msgid "Shown in portlet manager"
+msgstr ""
+
+#: ./arche_papergirl/./portlets.py:38
+msgid "Which maillist?"
+msgstr ""
+
+#. Default: Sender email address - leave empty to use system default:
+#. '${sys_default}'
+#: ./arche_papergirl/./schemas.py:30
+msgid "sender_email_address"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:39
+msgid "Used as first heading in the newsletter"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:43
+msgid "Mail subject line"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:53
+msgid "Sender name"
+msgstr ""
+
+#. Default: If a custom sender email was specified, you may specify sender name
+#. here.
+#: ./arche_papergirl/./schemas.py:54
+msgid "sender_name_description"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:61
+msgid "Pick a layout to use for this letter"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:70
+msgid "Section title"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:75
+msgid "Text"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:116 ./arche_papergirl/./schemas.py:236
+#: ./arche_papergirl/./schemas.py:270
+#: ./arche_papergirl/./templates/list_subscribers.pt:20
+msgid "Email"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:119
+msgid "Test recipients"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:127
+msgid "Pick lists to send to"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:151
+#, python-format
+msgid "The ${tag}-tag is required in the template."
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:164
+msgid "List title"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:168
+msgid "Allow users to subscribe?"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:185
+msgid "Template title"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:189 ./arche_papergirl/./schemas.py:282
+msgid "Description"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:190
+msgid "For internal use"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:196
+#: ./arche_papergirl/./templates/newsletter.pt:11
+msgid "Mail template"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:206
+msgid "Include style sheets"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:211
+msgid "Use Premailer inliner"
+msgstr ""
+
+#. Default: This address is already used.
+#: ./arche_papergirl/./schemas.py:229
+msgid "already_used_email_error"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:255
+msgid "Already subscribing"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:262
+#, python-format
+msgid "Subscribe to ${title}"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:291
+msgid "Email addresses, one per row."
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:297 ./arche_papergirl/./schemas.py:305
+#: ./arche_papergirl/./templates/list_subscribers.pt:23
+#: ./arche_papergirl/./templates/postoffice.pt:42
+msgid "Lists"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:322
+msgid "Your subscriptions"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:325
+msgid "Check any list to unsubscribe from it"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:338
+#, python-format
+msgid "Must be one of these types: ${types}"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:352
+msgid "Populate from this content - make sure it's public!"
+msgstr ""
+
+#: ./arche_papergirl/./schemas.py:361
+msgid "External image url"
+msgstr ""
+
+#: ./arche_papergirl/./security.py:22
+#: ./arche_papergirl/./models/post_office.py:15
+msgid "Post Office"
+msgstr ""
+
+#: ./arche_papergirl/./validators.py:21
+#, python-format
+msgid "Invalid addresses found: ${emails}"
+msgstr ""
+
+#: ./arche_papergirl/./models/email_list.py:15
+msgid "Email list"
+msgstr ""
+
+#: ./arche_papergirl/./models/email_list_template.py:16
+msgid "Email list template"
+msgstr ""
+
+#: ./arche_papergirl/./models/list_subscriber.py:26
+msgid "ListSubscriber"
+msgstr ""
+
+#: ./arche_papergirl/./models/list_subscribers.py:15
+msgid "List subscribers"
+msgstr ""
+
+#: ./arche_papergirl/./models/newsletter.py:30
+msgid "Newsletter"
+msgstr ""
+
+#: ./arche_papergirl/./models/newsletter.py:139
+msgid "NewsletterSection"
+msgstr ""
+
+#: ./arche_papergirl/./models/section_populator.py:68
+msgid "Local image"
+msgstr ""
+
+#: ./arche_papergirl/./models/section_populator.py:73
+msgid "External image"
+msgstr ""
+
+#: ./arche_papergirl/./templates/confirm_subscription.pt:10
+msgid "Almost done"
+msgstr ""
+
+#. Default: We've sent an email to the address you specified. Click on the link
+#. in the email to subscribe.
+#: ./arche_papergirl/./templates/confirm_subscription.pt:12
+msgid "confirm_notice"
+msgstr ""
+
+#: ./arche_papergirl/./templates/email_list.pt:16
+#: ./arche_papergirl/./templates/email_list_template.pt:22
+#: ./arche_papergirl/./templates/list_subscriber.pt:24
+#: ./arche_papergirl/./templates/newsletter.pt:219
+#: ./arche_papergirl/./templates/send_details.pt:48
+msgid "Back"
+msgstr ""
+
+#: ./arche_papergirl/./templates/list_subscribers.pt:21
+msgid "Created"
+msgstr ""
+
+#: ./arche_papergirl/./templates/list_subscribers.pt:22
+msgid "Modified"
+msgstr ""
+
+#: ./arche_papergirl/./templates/list_subscribers.pt:36
+msgid "Loading..."
+msgstr ""
+
+#: ./arche_papergirl/./templates/mail_subscribe.pt:6
+msgid "Subscribe..."
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:16
+msgid "Template not found!"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:22
+msgid "Subject:"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:38
+#: ./arche_papergirl/./templates/newsletter.pt:79
+msgid "Edit"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:50
+#: ./arche_papergirl/./templates/newsletter.pt:91
+msgid "Delete"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:55
+msgid "Reset"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:63
+msgid "No text yet! Populate section with"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:100
+msgid "Size"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:101
+msgid "Type"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:112
+msgid "Section"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:119
+msgid "Attachment"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:126
+msgid "Status"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:129
+msgid "Preview"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:132
+msgid "Test"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:178
+msgid "Show details"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:188
+msgid "Approx. template look"
+msgstr ""
+
+#: ./arche_papergirl/./templates/newsletter.pt:191
+msgid "Open in new window"
+msgstr ""
+
+#: ./arche_papergirl/./templates/not_subscribing.pt:10
+msgid "No lists active"
+msgstr ""
+
+#: ./arche_papergirl/./templates/not_subscribing.pt:11
+msgid "You're not subscribing to anything here"
+msgstr ""
+
+#: ./arche_papergirl/./templates/not_subscribing.pt:15
+msgid "OK"
+msgstr ""
+
+#: ./arche_papergirl/./templates/postoffice.pt:20
+msgid "Subscribers"
+msgstr ""
+
+#: ./arche_papergirl/./templates/postoffice.pt:26
+msgid "Browse (${count})"
+msgstr ""
+
+#: ./arche_papergirl/./templates/postoffice.pt:32
+msgid "Update from list"
+msgstr ""
+
+#: ./arche_papergirl/./templates/postoffice.pt:58
+msgid "Templates"
+msgstr ""
+
+#: ./arche_papergirl/./templates/postoffice.pt:74
+msgid "Latest newsletters"
+msgstr ""
+
+#: ./arche_papergirl/./templates/send_details.pt:10
+msgid "Details"
+msgstr ""
+
+#: ./arche_papergirl/./views/list_subscriber.py:23
+msgid "Unsubscribe"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:70
+msgid "Delivered"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:72
+#, python-format
+msgid "Error (${err_num})"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:75
+#, python-format
+msgid "In queue (${num})"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:96
+#: ./arche_papergirl/./views/newsletter.py:118
+msgid "(Test list title)"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:104
+msgid "Send test email"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:107
+#: ./arche_papergirl/./views/newsletter.py:138
+msgid "Send"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:126
+#, python-format
+msgid "Sent ${num} test emails"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:135
+msgid "Send to list"
+msgstr ""
+
+#. Default: Added: ${found_subs} Skipped: ${already_added_subs} (due to already
+#. in queue)
+#: ./arche_papergirl/./views/newsletter.py:151
+msgid "mail_queued_notice"
+msgstr ""
+
+#: ./arche_papergirl/./views/newsletter.py:205
+msgid "Reset to initial state"
+msgstr ""
+
+#: ./arche_papergirl/./views/post_office.py:57
+msgid "Update subscribers"
+msgstr ""
+
+#: ./arche_papergirl/./views/post_office.py:60
+msgid "Add"
+msgstr ""
+
+#: ./arche_papergirl/./views/post_office.py:61
+msgid "Remove"
+msgstr ""
+
+#: ./arche_papergirl/./views/post_office.py:62
+msgid "Cancel"
+msgstr ""
+
+#: ./arche_papergirl/./views/subscription.py:42
+msgid "Subscribe"
+msgstr ""
+
+#: ./arche_papergirl/./views/subscription.py:72
+#, python-format
+msgid "${title} subscription request"
+msgstr ""
+
+#: ./arche_papergirl/./views/subscription.py:96
+#, python-format
+msgid "All done, you're now subscribing to ${title}"
+msgstr ""

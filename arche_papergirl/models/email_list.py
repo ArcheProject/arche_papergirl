@@ -12,7 +12,7 @@ from arche_papergirl.interfaces import IEmailList
 @implementer(IEmailList)
 class EmailList(Content):
     type_name = "EmailList"
-    type_title = _("EmailList")
+    type_title = _("Email list")
     add_permission = PERM_ADD_EMAIL_LIST
     default_view = "view"
     nav_visible = True

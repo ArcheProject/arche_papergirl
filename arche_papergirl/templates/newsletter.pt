@@ -8,7 +8,7 @@
 <div metal:fill-slot="main-content">
 
   <h3 tal:define="mail_template request.resolve_uid(context.email_template)">
-    <span class="text-muted" i18n:translate="">Mail template:</span>
+    <span class="text-muted"><tal:ts i18n:translate="">Mail template</tal:ts>:</span>
     <a tal:condition="mail_template"
        href="${request.resource_url(mail_template)}">
       ${mail_template.title}

@@ -13,7 +13,7 @@ from arche_papergirl.interfaces import IEmailListTemplate
 @implementer(IEmailListTemplate)
 class EmailListTemplate(Content):
     type_name = "EmailListTemplate"
-    type_title = _("EmailList Template")
+    type_title = _("Email list template")
     default_view = "view"
     nav_visible = False
     listing_visible = True

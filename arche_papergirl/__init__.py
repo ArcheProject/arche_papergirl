@@ -14,6 +14,8 @@ def includeme(config):
     config.include('.portlets')
     config.include('.security')
     config.include('.views')
+    config.add_translation_dirs('arche_papergirl:locale/')
+
     #Populate with default settings
     settings = config.registry.settings
     for (k, v) in base_config_values.items():

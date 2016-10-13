@@ -17,7 +17,7 @@ def subscribe_title(node, kw):
 
 @colander.deferred
 def maillist_widget(node, kw):
-    values = [('', _("[Select]"))]
+    values = [('', _("Select..."))]
     request = kw['request']
     query = "type_name == 'EmailList'"
     docids = request.root.catalog.query(query, sort_index = 'sortable_title')[1]

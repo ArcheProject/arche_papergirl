@@ -27,7 +27,8 @@ def pick_email_template(node, kw):
 @colander.deferred
 def sender_email_title(node, kw):
     request = kw['request']
-    return _("Sender email address - leave empty to use system default: '${sys_default}'",
+    return _("sender_email_address",
+             default = "Sender email address - leave empty to use system default: '${sys_default}'",
              mapping = {'sys_default': request.registry.settings.get('mail.default_sender', '')})
 
 
