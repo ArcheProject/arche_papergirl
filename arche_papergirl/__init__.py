@@ -11,6 +11,7 @@ def includeme(config):
     config.include('.subscribers')
     config.include('.models')
     config.include('.schemas')
+    config.include('.portlets')
     config.include('.security')
     config.include('.views')
     #Populate with default settings

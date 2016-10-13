@@ -21,6 +21,7 @@ class EmailList(Content):
     show_byline = False
     css_icon = "glyphicon glyphicon-send"
     title = ""
+    allow_subscription = False
     subscribe_on_profile = False
 
 

@@ -45,7 +45,7 @@ class IListSubscribers(IBase, IIndexedContent):
         """
 
 
-class INewsletter(IContent, IThumbnailedContent):
+class INewsletter(IContent):
     """
 
     """

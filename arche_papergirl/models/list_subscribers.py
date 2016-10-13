@@ -48,5 +48,6 @@ class ListSubscribers(Content):
         except KeyError:
             return default
 
+
 def includeme(config):
     config.add_content_factory(ListSubscribers)

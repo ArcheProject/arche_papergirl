@@ -7,6 +7,7 @@ from pyramid.renderers import render
 from pyramid.traversal import find_interface
 
 from arche_papergirl import _
+from arche_papergirl.interfaces import IEmailList
 from arche_papergirl.interfaces import IPostOffice
 from arche_papergirl.utils import get_mock_structure
 from arche_papergirl.utils import get_po_objs
@@ -84,6 +85,7 @@ def current_users_email_set(node, kw):
         return set([email])
     return set()
 
+
 @colander.deferred
 def pick_list_widget(node, kw):
     context = kw['context']
@@ -92,6 +94,7 @@ def pick_list_widget(node, kw):
     for obj in get_po_objs(context, request, 'EmailList'):
         values.append((obj.uid, obj.title,))
     return deform.widget.RadioChoiceWidget(values=values)
+
 
 @colander.deferred
 def pick_lists_widget(node, kw):
@@ -122,7 +125,6 @@ class SendToLists(colander.Schema):
         colander.String(),
         title = _("Pick lists to send to"),
         widget = pick_list_widget,
-        #validator = pick_list_validator
     )
 
 
@@ -141,7 +143,6 @@ class MailTemplateValidator(object):
 
     def __call__(self, node, value):
         must_tags = ['body', 'head', 'html']
-
         for tag in must_tags:
             text = "<%s[^>]*>" % tag
             pattern = re.compile(text, flags=re.IGNORECASE)
@@ -160,6 +161,11 @@ class EmailListSchema(colander.Schema):
     title = colander.SchemaNode(
         colander.String(),
         title = _("List title"),
+    )
+    allow_subscription = colander.SchemaNode(
+        colander.Bool(),
+        title = _("Allow users to subscribe?"),
+        default = False,
     )
 
 
@@ -218,9 +224,6 @@ class UniqueSubscriberEmail(object):
         email_val = colander.Email()
         email_val(node, value)
         post_office = find_interface(self.context, IPostOffice)
-        #existing_mails = set([x for x in email_list.get_emails()])
-        #if IListSubscriber.providedBy(self.context):
-        #    existing_mails.remove(self.context.email)
         if value in post_office.subscribers.emails():
             raise colander.Invalid(node, _("already_used_email_error",
                                            default = "This address is already used."))
@@ -234,11 +237,37 @@ class ListSubscriberSchema(colander.Schema):
     )
 
 
-class RequestSubscriptionChangeSchema(colander.Schema):
+@colander.deferred
+class NewSubscriberValidator(object):
+    """ Check if an address has already been used or if it's already in the list.
+    """
+    def __init__(self, node, kw):
+        self.context = kw['context']
+        assert IEmailList.providedBy(self.context)
+
+    def __call__(self, node, value):
+        email_val = colander.Email()
+        email_val(node, value)
+        post_office = find_interface(self.context, IPostOffice)
+        subs = post_office.subscribers.email_to_subs(value)
+        if subs and self.context.uid in subs.list_references:
+            raise colander.Invalid(node, _("Already subscribing"))
+
+
+@colander.deferred
+def subscribe_to_context(node, kw):
+    context = kw['context']
+    request = kw['request']
+    msg = _("Subscribe to ${title}", mapping = {'title': context.title})
+    return request.localizer.translate(msg)
+
+
+class RequestSubscriptionSchema(colander.Schema):
+    title = subscribe_to_context
     email = colander.SchemaNode(
         colander.String(),
         title = _("Email"),
-        validator = colander.Email()
+        validator = NewSubscriberValidator,
     )
 
 
@@ -283,12 +312,13 @@ def pick_unsubscribe_lists(node, kw):
     context = kw['context']
     values = []
     for uid in context.list_references:
-        obj = request.resolve_uid(uid)
+        obj = request.resolve_uid(uid, perm = None)
         values.append((obj.uid, obj.title,))
     return deform.widget.CheckboxChoiceWidget(values=values)
 
 
 class ManageUnsubscribeSchema(colander.Schema):
+    title = _("Your subscriptions")
     lists = colander.SchemaNode(
         colander.Set(),
         title=_("Check any list to unsubscribe from it"),
@@ -341,7 +371,7 @@ def includeme(config):
     config.add_content_schema('Newsletter', SendToLists, 'send_to_lists')
     config.add_content_schema('EmailList', EmailListSchema, ('add', 'edit'))
     config.add_content_schema('EmailListTemplate', EmailListTemplateSchema, ('add', 'edit', 'view'))
-    config.add_content_schema('EmailList', RequestSubscriptionChangeSchema, 'request')
+    config.add_content_schema('EmailList', RequestSubscriptionSchema, ('subscribe'))
     config.add_content_schema('PostOffice', PostOfficeSchema, ('add', 'edit'))
     config.add_content_schema('ListSubscriber', UpdateListSubscribers, 'update')
     config.add_content_schema('ListSubscriber', EditListSubscriber, 'edit')

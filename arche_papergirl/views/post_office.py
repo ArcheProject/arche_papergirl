@@ -1,25 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import deform
 from arche.security import PERM_EDIT, PERM_VIEW
-from arche.security import NO_PERMISSION_REQUIRED
-from arche.views.base import BaseView, DefaultAddForm, BaseForm
-from arche_papergirl.exceptions import AlreadyInQueueError
-from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from arche.views.base import BaseForm
+from arche.views.base import BaseView
+from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.traversal import resource_path
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
 from arche_papergirl import _
-from arche_papergirl.utils import deliver_newsletter
-from arche_papergirl.utils import render_newsletter
-from arche_papergirl.interfaces import INewsletter, IPostOffice, IListSubscribers
-from arche_papergirl.interfaces import INewsletterSection
-from arche_papergirl.interfaces import IEmailList
-from arche_papergirl.interfaces import IListSubscriber
 from arche_papergirl.fanstatic_lib import paper_manage
+from arche_papergirl.interfaces import IPostOffice
 
 
 @view_defaults(context=IPostOffice,
@@ -77,8 +71,6 @@ class UpdateSubscribersForm(BaseForm):
     """
 
     def add_success(self, appstruct):
-        #obj = self.request.content_factories['ListSubscriber'](email = appstruct['email'])
-        #self.context.subscribers[obj.uid] = obj
         for email in appstruct['emails'].splitlines():
             if not email:
                 continue

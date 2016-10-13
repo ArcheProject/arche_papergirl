@@ -7,11 +7,12 @@
 <body>
 <div metal:fill-slot="main-content">
 
-  <h1 i18n:translate="">Done</h1>
+  <h1 i18n:translate="">No lists active</h1>
+  <p i18n:translate="">You're not subscribing to anything here</p>
 
-  <p i18n:translate="subscription_confirmed_notice">
-    All done, you're now subscribing.
-  </p>
+  <p><a href="${request.resource_url(context)}"
+        class="btn btn-default"
+        i18n:translate="">OK</a></p>
 
 </div>
 </body>

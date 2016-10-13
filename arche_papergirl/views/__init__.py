@@ -6,3 +6,4 @@ def includeme(config):
     config.include('.list_subscribers')
     config.include('.newsletter')
     config.include('.post_office')
+    config.include('.subscription')

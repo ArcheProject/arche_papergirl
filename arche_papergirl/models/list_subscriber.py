@@ -37,6 +37,10 @@ class ListSubscriber(Base):
         self._list_references = OOSet()
         super(ListSubscriber, self).__init__(email = email, token = token, **kw)
 
+    @property
+    def title(self):
+        return self.email
+
     def get_unsubscribe_url(self, request):
         return request.resource_url(self, 'unsubscribe', self.token)
 
