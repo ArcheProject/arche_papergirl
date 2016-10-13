@@ -177,10 +177,9 @@ class PopulateSectionForm(BaseForm):
         return self.populator.get_schema(self.context, self.request)
 
     def add_success(self, appstruct):
-        if self.request.registry.settings.get('arche.debug', False):
-            #Only reasonable to enable this functionality if arche is in debug mode
-            self.context.populator_appstruct = appstruct
-            self.context.populator_name = self.populator.name
+        #Store populator info for a possible rollback
+        self.context.populator_appstruct = appstruct
+        self.context.populator_name = self.populator.name
         html = self.populator.render(self.context, self.request, **appstruct)
         self.context.update(body = html)
         return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
