@@ -285,12 +285,21 @@ class PostOfficeSchema(colander.Schema):
     )
 
 
+def strip_empty_lines(value):
+    out = ""
+    for row in value.splitlines():
+        if row:
+            out += "%s\n" % row.strip()
+    return out
+
+
 class UpdateListSubscribers(colander.Schema):
     emails = colander.SchemaNode(
         colander.String(),
         title=_("Email addresses, one per row."),
         widget=deform.widget.TextAreaWidget(rows=6),
         validator = multiple_email_validator,
+        preparer = strip_empty_lines,
     )
     lists = colander.SchemaNode(
         colander.Set(),
