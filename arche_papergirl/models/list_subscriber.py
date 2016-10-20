@@ -26,6 +26,7 @@ class ListSubscriber(Base):
     type_title = _("ListSubscriber")
     listing_visible = False
     search_visible = False
+    add_permission = None #Not through regular add menu
 #    naming_attr = 'uid'
     modified = None
     email = ""

@@ -7,6 +7,7 @@ from zope.interface import implementer
 
 from arche_papergirl import _
 from arche_papergirl.interfaces import IPostOffice
+from arche_papergirl.security import PERM_ADD_POST_OFFICE
 
 
 @implementer(IPostOffice)
@@ -18,6 +19,7 @@ class PostOffice(Content, LocalRolesMixin, ContextACLMixin):
     listing_visible = True
     search_visible = False
     show_byline = False
+    add_permission = PERM_ADD_POST_OFFICE
     css_icon = "glyphicon glyphicon-inbox"
 
     @property

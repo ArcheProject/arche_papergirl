@@ -13,6 +13,7 @@ from arche_papergirl.interfaces import IListSubscribers
 class ListSubscribers(Content):
     type_name = "ListSubscribers"
     type_title = _("List subscribers")
+    add_permission = None #Not through regular menu
     default_view = "view"
     nav_visible = False
     listing_visible = True
