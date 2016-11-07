@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 from arche.interfaces import IFile, IBlobs
 from arche.security import PERM_VIEW
@@ -83,7 +85,7 @@ def inject_css_from_files(email_template, filenames, html, debug = False):
         if debug:
             css_out += "\n/* START %s */\n\n" % relpath
         with open(abspath, 'r') as fb:
-            css_out += fb.read()
+            css_out += fb.read().decode('utf-8')
         if debug:
             css_out += "\n\n/* END %s */\n\n" % relpath
     out = _INJECT_TPL % css_out
