@@ -38,10 +38,6 @@ body,
   margin-top: 30px;
   color: #aaaaaa; }
 
-a {
-  color: #ff0066;
-  text-decoration: none; }
-
 .borderize {
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
@@ -55,7 +51,6 @@ a {
 
 .img-circle {
   border-radius: 50%; }
-
 
 hr {
   border-color: #cccccc;
