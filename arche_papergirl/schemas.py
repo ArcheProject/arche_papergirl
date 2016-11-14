@@ -287,9 +287,10 @@ class PostOfficeSchema(colander.Schema):
 
 def strip_empty_lines(value):
     out = ""
-    for row in value.splitlines():
-        if row:
-            out += "%s\n" % row.strip()
+    if value:
+        for row in value.splitlines():
+            if row:
+                out += "%s\n" % row.strip()
     return out
 
 

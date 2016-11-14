@@ -11,6 +11,11 @@
 
   Subscribers: ${list_subscribers}
   <p>
+    <a href="${request.resource_url(context, 'emails.txt')}"
+       tal:condition="can_export"
+       class="btn btn-default"
+      i18n:translate="">Export emails</a>
+
     <a href="${request.resource_url(context.__parent__)}"
        class="btn btn-default"
       i18n:translate="">Back</a>
