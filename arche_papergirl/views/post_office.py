@@ -2,9 +2,11 @@
 from __future__ import unicode_literals
 
 import deform
-from arche.security import PERM_EDIT, PERM_VIEW
+from arche.security import PERM_EDIT
+from arche.security import PERM_VIEW
 from arche.views.base import BaseForm
 from arche.views.base import BaseView
+from arche_papergirl.tasks import update_subscribers
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.traversal import resource_path
@@ -71,27 +73,19 @@ class UpdateSubscribersForm(BaseForm):
     """
 
     def add_success(self, appstruct):
-        for email in appstruct['emails'].splitlines():
-            if not email:
-                continue
-            subs = self.context.subscribers.email_to_subs(email)
-            if subs is None:
-                subs = self.request.content_factories['ListSubscriber'](email = email)
-                self.context.subscribers[subs.uid] = subs
-            subs.add_lists(appstruct['lists'])
-        self.flash_messages.add('Added')
+        self.request.add_task(update_subscribers, self.context,
+                              emails_text = appstruct['emails'],
+                              emails_lists = appstruct['lists'],
+                              action = 'add_lists')
+        self.flash_messages.add(_("Subscribers will be added shortly when a worker is ready"))
         return _redirect_or_remove(self)
 
     def remove_success(self, appstruct):
-        for email in appstruct['email'].splitlines():
-            if not email:
-                continue
-            subs = self.context.subscribers.email_to_subs(email)
-            if subs is None:
-                #Don't create if they don't exist!
-                continue
-            subs.remove_lists(appstruct['lists'])
-        self.flash_messages.add('remove success')
+        self.request.add_task(update_subscribers, self.context,
+                              emails_text = appstruct['emails'],
+                              emails_lists = appstruct['lists'],
+                              action = 'remove_lists')
+        self.flash_messages.add(_("Update will commence as soon as a worker is ready."))
         return _redirect_or_remove(self)
 
     def cancel(self, *args):

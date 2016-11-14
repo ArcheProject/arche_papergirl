@@ -14,18 +14,19 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+from zope.interface.interfaces import ComponentLookupError
 
 from arche_papergirl import _
-from arche_papergirl.exceptions import AlreadyInQueueError
 from arche_papergirl.fanstatic_lib import paper_manage
 from arche_papergirl.interfaces import IEmailListTemplate
 from arche_papergirl.interfaces import ISectionPopulatorUtil
 from arche_papergirl.interfaces import INewsletter
 from arche_papergirl.interfaces import INewsletterSection
 from arche_papergirl.utils import deliver_newsletter
+from arche_papergirl.utils import send_to_list
+from arche_papergirl.utils import work_through_queue
 from arche_papergirl.utils import render_newsletter
 from arche_papergirl.security import PERM_ADD_NEWSLETTER_SECTION
-from zope.interface.interfaces import ComponentLookupError
 
 
 @view_defaults(context = INewsletter, permission = PERM_EDIT)
@@ -53,12 +54,46 @@ class NewsletterView(BaseView):
     def get_populators(self):
         return self.request.registry.getAllUtilitiesRegisteredFor(ISectionPopulatorUtil)
 
-    @view_config(name = 'manual_send.json', renderer='json')
-    def manual_send(self):
-        subscriber, email_list, tpl = _next_objs(self.context, self.request)
-        deliver_newsletter(self.request, self.context, subscriber, email_list, tpl)
-        return {'status': 'sent',
-                'pending': self.context.queue_len}
+    @view_config(name = 'reset_queue')
+    def reset_queue(self):
+        self.context._queue.clear()
+        self.context._uid_to_status.clear()
+        return HTTPFound(location=self.request.resource_url(self.context))
+
+    # @view_config(name = 'manual_send.json', renderer='json')
+    # def manual_send(self):
+    #     subscriber, email_list, tpl = _next_objs(self.context, self.request)
+    #     deliver_newsletter(self.request, self.context, subscriber, email_list, tpl)
+    #     return {'status': 'sent',
+    #             'pending': self.context.queue_len}
+
+    @view_config(name = 'send_celery.json', renderer='json')
+    def celery_send(self):
+        res = work_through_queue(self.request, self.context)
+        url = self.request.route_url('task_status', task_id = res.task_id)
+        return {'task_id': res.task_id,
+                'status_url': url}
+
+    @view_config(name = 'task_terminate')
+    def task_terminate(self):
+        if self.context.task_id:
+            from arche_papergirl.tasks import work_through_queue
+            res = work_through_queue.AsyncResult(self.context.task_id)
+            res.revoke(terminate=True)
+            for cres in res.children:
+                cres.revoke(terminate=True)
+            self.context.task_id = None
+            self.flash_messages.add(_("Task(s) terminated"), type='warning')
+        else:
+            self.flash_messages.add(_("Not running"), type='danger')
+        back_url = self.request.resource_url(self.context)
+        return HTTPFound(location=back_url)
+
+    @view_config(name = 'status.json', renderer = 'json')
+    def newsletter_status(self):
+        results = self.context.get_status()
+        results['running_task_id'] = self.context.task_id
+        return results
 
     @view_config(name = 'send_details', renderer = 'arche_papergirl:templates/send_details.pt')
     def send_details(self):
@@ -138,22 +173,8 @@ class SendToListSubForm(BaseForm):
     buttons = (deform.Button('send_to_lists', title = _("Send")),)
 
     def send_to_lists_success(self, appstruct):
-        list_uid = appstruct['recipient_list']
-        found_subs = 0
-        already_added_subs = 0
-        query = "list_references == '%s' and type_name == 'ListSubscriber'" % list_uid
-        for subs in self.catalog_query(query, resolve=True):
-            try:
-                self.context.add_queue(subs.uid, list_uid)
-                found_subs += 1
-            except AlreadyInQueueError:
-                already_added_subs += 1
-        msg = _("mail_queued_notice",
-                default="Added: ${found_subs} Skipped: ${already_added_subs} (due to already in queue)",
-                mapping = {'found_subs': found_subs, 'already_added_subs': already_added_subs})
-        type_status = found_subs and 'success' or 'warning'
-        self.flash_messages.add(msg, type=type_status)
-        return HTTPFound(location=self.request.resource_url(self.context))
+        async_res = send_to_list(self.request, self.context, appstruct['recipient_list'])
+        return HTTPFound(location=self.request.resource_url(self.context, query = {'queue_id': async_res.id}))
 
 
 @view_config(context=INewsletterSection,
@@ -241,16 +262,6 @@ class InlineAddFileForm(AddFileForm):
 def redirect_to_parent_uid_anchor(context, request):
     url = request.resource_url(context.__parent__, anchor = context.uid)
     return HTTPFound(location = url)
-
-
-def _next_objs(newsletter, request):
-    subscriber_uid, list_uid = newsletter.pop_next()
-    if not subscriber_uid:
-        return None, None, None
-    subscriber = request.resolve_uid(subscriber_uid)
-    email_list = request.resolve_uid(list_uid)
-    tpl = request.resolve_uid(newsletter.email_template)
-    return subscriber, email_list, tpl
 
 
 def includeme(config):

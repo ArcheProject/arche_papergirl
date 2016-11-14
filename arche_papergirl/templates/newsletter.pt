@@ -132,20 +132,27 @@
       <a href="#test_tab" data-toggle="tab" i18n:translate="">Test</a>
     </li>
     <li>
-      <a href="#send_tab" data-toggle="tab">Send</a>
+      <a href="#queue_tab" data-toggle="tab" i18n:translate="">Queue</a>
     </li>
   </ul>
 
   <div class="tab-content">
-
     <div class="tab-pane active" id="status_tab">
       <div class="panel panel-default">
         <div class="panel-body">
-          Active:
-          Queue: <span data-pending data-orig-value="${context.queue_len}">${context.queue_len}</span>
-          Completed: <span data-completed>0</span>
 
-          <tal:queue condition="context.queue_len">
+          <div data-waiting-for-queue
+               class="alert alert-info hidden" role="alert">
+            <span class="glyphicon glyphicon-refresh rotate-me"></span>
+            Waiting for queue to complete...
+          </div>
+
+          <div class="hidden" data-send-area>
+            Current batch:
+            <!-- Note on dual data tags: Different scripts may write to this -->
+            Queue: <span data-pending data-nl-status="queue">0</span>
+            Completed: <span data-completed>0</span>
+
             <div class="progress">
               <div data-progress
                    class="progress-bar progress-bar-success"
@@ -157,20 +164,38 @@
               </div>
             </div>
 
+            <p i18n:translate="background_send_info">Emails are sent in the background.
+              There's no need to remail on this page while sending.</p>
+
+            <a href="${request.resource_url(context,'send_celery.json')}"
+               data-send-list-celery
+              class="btn btn-success disabled">
+              <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+              Send
+            </a>
+
+            <a href="${request.resource_url(context,'task_terminate')}"
+               data-celery-terminate
+              class="btn btn-danger ${context.task_id == None and 'disabled' or ''}">
+              Stop
+            </a>
+
             <a href="${request.resource_url(context,'manual_send.json')}"
-               tal:condition="context.queue_len"
+               tal:condition="False"
                data-send-list
               class="btn btn-success">
               <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
-              Manual send</a>
-          </tal:queue>
+              Manual send
+              (Disabled for now)
+            </a>
+          </div>
 
-          <h3>Status</h3>
+          <h3 i18n:translate="">Status</h3>
 
           <div tal:define="status context.get_status()">
-            Queue: ${status['queue']}
-            Delivered: ${status['delivered']}
-            Errored: ${status['error']}
+            Queue: <span data-nl-status="queue">${status['queue']}</span>
+            Delivered: <span data-nl-status="delivered">${status['delivered']}</span>
+            Errored: <span data-nl-status="error">${status['error']}</span>
           </div>
 
           <a class="btn btn-default btn-sm"
@@ -204,7 +229,7 @@
       </div>
     </div>
 
-    <div class="tab-pane" id="send_tab">
+    <div class="tab-pane" id="queue_tab">
       <div class="panel panel-default">
         <div class="panel-body">
           ${structure: send_to_list_form}
@@ -219,6 +244,34 @@
       i18n:translate="">Back</a>
   </p>
 
+<script tal:define="queue_id request.GET.get('queue_id', None)" tal:condition="queue_id">
+$(function () {
+  $('[data-waiting-for-queue]').removeClass('hidden');
+  console.log('waiting for ', '${queue_id}');
+  var resolve_wait = wait_for_task('${queue_id}');
+  resolve_wait.done( function(response) {
+    //console.log(response);
+    //console.log('Ive finished waiting!');
+    $('[data-waiting-for-queue]').addClass('hidden');
+    update_status();
+  });
+});
+</script>
+<script tal:condition="context.task_id">
+$(function () {
+  $('[data-send-area]').removeClass('hidden');
+  var data_btn = $('[data-send-list-celery]');
+  arche.actionmarker_feedback(data_btn, true);
+  var url = "${request.route_url('task_status', task_id = context.task_id)}";
+  //console.log('reading status from: ', url);
+  update_result_celery(url, data_btn);
+});
+</script>
+<script>
+$(function () {
+  update_status();
+});
+</script>
 </div>
 </body>
 </html>

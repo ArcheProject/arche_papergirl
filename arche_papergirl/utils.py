@@ -1,5 +1,5 @@
 import re
-from arche.interfaces import IFile, IBlobs
+from arche.interfaces import IFile, IBlobs, IFlashMessages
 from arche.security import PERM_VIEW
 from chameleon.zpt.template import PageTemplate
 from pyramid.traversal import find_interface
@@ -127,3 +127,27 @@ def get_mock_structure(request):
     )
     email_list = request.content_factories['EmailList']()
     return newsletter, subscriber, email_list
+
+
+def work_through_queue(request, newsletter):
+    fm = IFlashMessages(request)
+    if request.registry.settings.get('papergirl.use_celery', False):
+        from arche_papergirl.tasks import work_through_queue
+        fm.add("Queue send started, reload page to show progress.")
+        return request.add_task(work_through_queue, newsletter)
+        #The actual group-task will be within children
+        #return res.children[0]
+    else:
+        raise Exception("Celery not found")
+
+
+def send_to_list(request, newsletter, list_uid):
+    fm = IFlashMessages(request)
+    if request.registry.settings.get('papergirl.use_celery', False):
+        from arche_papergirl.tasks import add_list_to_queue
+        async_res = request.add_task(add_list_to_queue, newsletter, list_uid)
+        fm.add("Delegated to queue")
+        return async_res
+    else:
+        #Should we keep support for not using celery?
+        raise Exception("Celery not found")

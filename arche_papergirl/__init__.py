@@ -3,7 +3,8 @@ from pyramid.i18n import TranslationStringFactory
 
 _ = TranslationStringFactory('arche_papergirl')
 
-base_config_values = {'papergirl.mail_css': 'arche_papergirl:static/mail_base.css'}
+base_config_values = {'papergirl.mail_css': 'arche_papergirl:static/mail_base.css',
+                      'papergirl.use_celery': None}
 
 
 def includeme(config):
@@ -16,12 +17,22 @@ def includeme(config):
     config.include('.views')
     config.add_translation_dirs('arche_papergirl:locale/')
 
-    #Populate with default settings
     settings = config.registry.settings
+    #Populate with default settings
     for (k, v) in base_config_values.items():
         if k not in settings:
             settings[k] = v
     check_and_convert_css(config)
+
+    #Check if celery is configured and available
+    #FIXME: Might be good to drop this
+    use_celery = settings.get('papergirl.use_celery', None)
+    if use_celery is None:
+        try:
+            import arche_celery
+            settings['papergirl.use_celery'] = True
+        except ImportError:
+            settings['papergirl.use_celery'] = False
 
 
 def check_and_convert_css(config):

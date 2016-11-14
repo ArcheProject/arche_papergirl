@@ -35,6 +35,7 @@ class Newsletter(Content):
     sender_name = ""
     email_template = ""
     add_permission = PERM_ADD_NEWSLETTER
+    task_id = None
 
     def __init__(self, **kw):
         super(Newsletter, self).__init__(**kw)
@@ -74,6 +75,16 @@ class Newsletter(Content):
         subscriber_uid, list_uid = self._queue.pop(key)
         self.set_uid_status(subscriber_uid, 0, list_uid)
         return subscriber_uid, list_uid
+
+    def completed(self, key):
+        subscriber_uid, list_uid = self._queue.pop(key)
+        self.set_uid_status(subscriber_uid, 0, list_uid)
+        return subscriber_uid, list_uid
+
+    def iter_queue(self):
+        for k in self._queue:
+            # key, subscriber_uid, list_uid
+            yield (k,) + self._queue[k]
 
     def set_uid_status(self, uid, status, list_uid, timestamp = utcnow()):
         """
