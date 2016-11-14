@@ -7,3 +7,4 @@ def includeme(config):
     config.include('.newsletter')
     config.include('.post_office')
     config.include('.subscription')
+    config.include('.task_status')
