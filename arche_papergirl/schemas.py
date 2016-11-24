@@ -309,6 +309,15 @@ class UpdateListSubscribers(colander.Schema):
     )
 
 
+class ScrubEmailsSchema(colander.Schema):
+    emails = colander.SchemaNode(
+        colander.String(),
+        title=_("Email addresses, one per row."),
+        widget=deform.widget.TextAreaWidget(rows=6),
+        preparer = strip_empty_lines,
+    )
+
+
 class EditListSubscriber(colander.Schema):
     list_references = colander.SchemaNode(
         colander.Set(),
@@ -384,6 +393,7 @@ def includeme(config):
     config.add_content_schema('EmailListTemplate', EmailListTemplateSchema, ('add', 'edit', 'view'))
     config.add_content_schema('EmailList', RequestSubscriptionSchema, ('subscribe'))
     config.add_content_schema('PostOffice', PostOfficeSchema, ('add', 'edit'))
+    config.add_content_schema('PostOffice', ScrubEmailsSchema, 'scrub_emails')
     config.add_content_schema('ListSubscriber', UpdateListSubscribers, 'update')
     config.add_content_schema('ListSubscriber', EditListSubscriber, 'edit')
     config.add_content_schema('ListSubscriber', ManageUnsubscribeSchema, 'manage_unsubscribe')

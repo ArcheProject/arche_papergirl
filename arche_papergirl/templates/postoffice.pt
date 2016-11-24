@@ -26,10 +26,17 @@
               <span i18n:translate="">Browse (<tal:ts i18n:name="count">${len(context.subscribers)}</tal:ts>)</span>
             </a>
           </li>
-          <li class = "list-group-item" >
+          <li class="list-group-item">
             <a href="${request.resource_url(context, 'update_subscribers')}"
               data-replace-target="#page_content">
               <span i18n:translate="">Update from list</span>
+              <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+            </a>
+          </li>
+          <li class="list-group-item">
+            <a href="${request.resource_url(context, 'scrub_emails')}"
+              data-replace-target="#page_content">
+              <span i18n:translate="">Scrub emails</span>
               <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
             </a>
           </li>
