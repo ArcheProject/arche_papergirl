@@ -44,6 +44,7 @@ class SubscribePortlet(PortletType):
     name = "papergirl_subscribe"
     schema_factory = SubscribePortletSchema
     title = _("Subscribe maillist")
+    tpl = 'arche_papergirl:templates/subscribe_portlet.pt'
 
     def render(self, context, request, view, **kwargs):
         settings = self.portlet.settings
@@ -53,7 +54,7 @@ class SubscribePortlet(PortletType):
                   'form': subs_form()['form'],
                   'mail_list': mail_list,
                   'portlet': self.portlet}
-        return render("arche_papergirl:templates/subscribe_portlet.pt",
+        return render(self.tpl,
                       values,
                       request = request)
 
