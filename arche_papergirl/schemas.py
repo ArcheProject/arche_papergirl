@@ -2,6 +2,7 @@ import colander
 import deform
 import re
 from arche.widgets import ReferenceWidget
+from arche_papergirl.fanstatic_lib import ace_js
 from arche_papergirl.validators import multiple_email_validator
 from pyramid.renderers import render
 from pyramid.traversal import find_interface
@@ -12,6 +13,29 @@ from arche_papergirl.interfaces import IPostOffice
 from arche_papergirl.utils import get_mock_structure
 from arche_papergirl.utils import get_po_objs
 from arche_papergirl.utils import render_newsletter
+
+
+class AceCodeWidget(deform.widget.Widget):
+    template = 'ace'
+    readonly_template = 'ace'
+    requirements = ( ('deform', None), )
+
+    def serialize(self, field, cstruct, **kw):
+        if cstruct in (colander.null, None):
+            cstruct = ''
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        #FIXME: Move
+        ace_js.need()
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is colander.null:
+            return colander.null
+        if not pstruct:
+            return colander.null
+        return pstruct
 
 
 @colander.deferred
@@ -196,7 +220,7 @@ class EmailListTemplateSchema(colander.Schema):
         title = _("Mail template"),
         #FIXME
         #description = ""
-        widget = deform.widget.TextAreaWidget(rows=15),
+        widget = AceCodeWidget(),
         default = default_mail_template,
         missing = default_mail_template,
         validator = MailTemplateValidator,

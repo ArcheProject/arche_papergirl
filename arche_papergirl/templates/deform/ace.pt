@@ -1,0 +1,30 @@
+<div tal:define="oid oid|field.oid;
+                 name name|field.name;"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n" 
+    i18n:domain="arche_papergirl"
+    tal:omit-tag="">
+  <style type="text/css">
+    .ace-edit-area {
+        position: relative;
+        width: 100%;
+        height: 400px;
+    }
+    .ace-edit-text {
+        display: none;
+    }
+
+  </style>
+  <div class="ace-edit-area" id="${oid}" tal:content="cstruct"></div>
+  <textarea class="ace-edit-text" id="${oid}-text" name="${name}" tal:content="cstruct"></textarea>
+
+  <script type="text/javascript">
+      deform.addCallback('${oid}', function(oid) {
+          var editor = ace.edit(oid);
+          //editor.setTheme("ace/theme/twilight");
+          editor.getSession().setMode("ace/mode/html");
+          editor.getSession().on('change', function () {
+              $('#' + oid + '-text').val(editor.getSession().getValue());
+          });
+      });
+  </script>
+</div>

@@ -13,7 +13,7 @@ from js.jquery import jquery
 papergirl_lib = Library('papergirl', 'static')
 
 paper_manage = Resource(papergirl_lib, 'manage.js', depends=(common_js, pure_js))
-
+ace_js = Resource(papergirl_lib, 'ace-noconflict/ace.js', minified='ace-min-noconflict/ace.js')
 
 #def include_resources(view, event):
 

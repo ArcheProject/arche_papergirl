@@ -1,5 +1,6 @@
 
 from pyramid.i18n import TranslationStringFactory
+from pyramid_deform import configure_zpt_renderer
 
 _ = TranslationStringFactory('arche_papergirl')
 
@@ -15,6 +16,8 @@ def includeme(config):
     config.include('.security')
     config.include('.views')
     config.add_translation_dirs('arche_papergirl:locale/')
+
+    configure_zpt_renderer(['arche_papergirl:templates/deform/'])
 
     #Populate with default settings
     settings = config.registry.settings
