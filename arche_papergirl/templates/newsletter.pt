@@ -31,8 +31,10 @@
       <p>${context.description}</p>
 
     </div>
-    <div class="list-group-item" tal:repeat="obj sections">
-      <div class="dropdown pull-right">
+    <tal:iter repeat="obj sections">
+    <div class="list-group-item">
+      <div class="text-right">
+      <div class="dropdown">
         <a href="${request.resource_url(obj, 'edit')}"
            class="btn btn-default btn-sm"
            title="Edit"
@@ -56,6 +58,8 @@
           </li>
         </ul>
       </div>
+      </div>
+
       <a name="${obj.uid}"><!-- --></a>
       <h3 tal:condition="obj.title" class="media-heading">${obj.title}</h3>
       <div tal:condition="obj.body">${structure: obj.body}</div>
@@ -69,6 +73,7 @@
         </tal:iter>
       </div>
     </div>
+    </tal:iter>
   </div>
 
   <div class="list-group">
