@@ -180,8 +180,8 @@ class PopulateSectionForm(BaseForm):
         #Store populator info for a possible rollback
         self.context.populator_appstruct = appstruct
         self.context.populator_name = self.populator.name
-        html = self.populator.render(self.context, self.request, **appstruct)
-        self.context.update(body = html)
+        data = self.populator.render(self.context, self.request, **appstruct)
+        self.context.update(**data)
         return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
                                       msg = self.default_success)
 
@@ -199,8 +199,8 @@ class ResetSectionView(BaseView):
         if not self.context.populator_name:
             raise HTTPForbidden("No populator info stored")
         populator = self.request.registry.getUtility(ISectionPopulatorUtil, name=self.context.populator_name)
-        html = populator.render(self.context, self.request, **self.context.populator_appstruct)
-        self.context.update(body = html)
+        data = populator.render(self.context, self.request, **self.context.populator_appstruct)
+        self.context.update(**data)
         return self.relocate_response(self.request.resource_url(self.context.__parent__, anchor=self.context.uid),
                                       msg = _("Reset to initial state"))
 

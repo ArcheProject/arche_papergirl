@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import colander
 from zope.interface import implementer
 
@@ -45,11 +48,11 @@ class SectionPopulatorUtil(object):
 def image_populator(context, request, alt='', width='100%', scale_name='col-12', from_uid = '', **kw):
     image = request.resolve_uid(from_uid)
     src = request.thumb_url(image, scale_name, key='file')
-    return """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= src, alt=alt, width=width)
+    return {'body': """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= src, alt=alt, width=width)}
 
 
 def external_image_populator(context, request, src='', alt='', width='100%', url='', **kw):
-    return """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= url, alt=alt, width=width)
+    return {'body': """<img src="{src}" alt="{alt}" width="{width}" />""".format(src= url, alt=alt, width=width)}
 
 
 def add_section_populator(config, renderer,
