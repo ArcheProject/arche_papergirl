@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2016-10-13 15:59+0200\n"
-"PO-Revision-Date: 2016-10-13 15:59+0200\n"
+"POT-Creation-Date: 2016-12-01 08:45+0100\n"
+"PO-Revision-Date: 2016-12-01 08:51+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -25,8 +25,8 @@ msgstr "Prenumerera på epostlista"
 msgid "Select..."
 msgstr "Välj…"
 
-#: arche_papergirl/./portlets.py:32 arche_papergirl/./schemas.py:38
-#: arche_papergirl/./schemas.py:278
+#: arche_papergirl/./portlets.py:32 arche_papergirl/./schemas.py:62
+#: arche_papergirl/./schemas.py:302
 msgid "Title"
 msgstr "Titel"
 
@@ -40,141 +40,141 @@ msgstr "Vilken epostlista?"
 
 #. Default: Sender email address - leave empty to use system default:
 #. '${sys_default}'
-#: arche_papergirl/./schemas.py:30
+#: arche_papergirl/./schemas.py:54
 msgid "sender_email_address"
 msgstr ""
 "Avsändarens epostadress - lämna tom för att använda systemets standard: "
 "’${sys_default}’"
 
-#: arche_papergirl/./schemas.py:39
+#: arche_papergirl/./schemas.py:63
 msgid "Used as first heading in the newsletter"
-msgstr ""
+msgstr "Används som första rubrik i nyhetsbrevet"
 
-#: arche_papergirl/./schemas.py:43
+#: arche_papergirl/./schemas.py:67
 msgid "Mail subject line"
 msgstr "Epostens ärenderad"
 
-#: arche_papergirl/./schemas.py:53
+#: arche_papergirl/./schemas.py:77
 msgid "Sender name"
 msgstr "Avsändare"
 
 #. Default: If a custom sender email was specified, you may specify sender name
 #. here.
-#: arche_papergirl/./schemas.py:54
+#: arche_papergirl/./schemas.py:78
 msgid "sender_name_description"
 msgstr ""
 "Om du angav anpassad epostadress så kan du skriva in avsändarens namn här."
 
-#: arche_papergirl/./schemas.py:61
+#: arche_papergirl/./schemas.py:85
 msgid "Pick a layout to use for this letter"
 msgstr "Välj en layout för brevet"
 
-#: arche_papergirl/./schemas.py:70
+#: arche_papergirl/./schemas.py:94
 msgid "Section title"
 msgstr "Sektionens titel"
 
-#: arche_papergirl/./schemas.py:75
+#: arche_papergirl/./schemas.py:99
 msgid "Text"
 msgstr "Text"
 
-#: arche_papergirl/./schemas.py:116 arche_papergirl/./schemas.py:236
-#: arche_papergirl/./schemas.py:270
+#: arche_papergirl/./schemas.py:140 arche_papergirl/./schemas.py:260
+#: arche_papergirl/./schemas.py:294
 #: arche_papergirl/./templates/list_subscribers.pt:20
 msgid "Email"
 msgstr "Epost"
 
-#: arche_papergirl/./schemas.py:119
+#: arche_papergirl/./schemas.py:143
 msgid "Test recipients"
 msgstr "Testmottagare"
 
-#: arche_papergirl/./schemas.py:127
+#: arche_papergirl/./schemas.py:151
 msgid "Pick lists to send to"
 msgstr "Välj lista att skicka till"
 
-#: arche_papergirl/./schemas.py:151
+#: arche_papergirl/./schemas.py:175
 #, python-format
 msgid "The ${tag}-tag is required in the template."
 msgstr "Taggen ${tag} krävs i mallen."
 
-#: arche_papergirl/./schemas.py:164
+#: arche_papergirl/./schemas.py:188
 msgid "List title"
 msgstr "Listtitel"
 
-#: arche_papergirl/./schemas.py:168
+#: arche_papergirl/./schemas.py:192
 msgid "Allow users to subscribe?"
 msgstr "Tillåt användare att prenumerera?"
 
-#: arche_papergirl/./schemas.py:185
+#: arche_papergirl/./schemas.py:209
 msgid "Template title"
 msgstr "Mallens titel"
 
-#: arche_papergirl/./schemas.py:189 arche_papergirl/./schemas.py:282
+#: arche_papergirl/./schemas.py:213 arche_papergirl/./schemas.py:306
 msgid "Description"
 msgstr "Beskrivning"
 
-#: arche_papergirl/./schemas.py:190
+#: arche_papergirl/./schemas.py:214
 msgid "For internal use"
 msgstr "För internt bruk"
 
-#: arche_papergirl/./schemas.py:196
+#: arche_papergirl/./schemas.py:220
 #: arche_papergirl/./templates/newsletter.pt:11
 msgid "Mail template"
 msgstr "Epostmall"
 
-#: arche_papergirl/./schemas.py:206
+#: arche_papergirl/./schemas.py:230
 msgid "Include style sheets"
 msgstr "Inkludera stilmallar"
 
-#: arche_papergirl/./schemas.py:211
+#: arche_papergirl/./schemas.py:235
 msgid "Use Premailer inliner"
 msgstr ""
 
 #. Default: This address is already used.
-#: arche_papergirl/./schemas.py:229
+#: arche_papergirl/./schemas.py:253
 msgid "already_used_email_error"
 msgstr "Adressen används redan"
 
-#: arche_papergirl/./schemas.py:255
+#: arche_papergirl/./schemas.py:279
 msgid "Already subscribing"
 msgstr "Prenumererar redan"
 
-#: arche_papergirl/./schemas.py:262
+#: arche_papergirl/./schemas.py:286
 #, python-format
 msgid "Subscribe to ${title}"
 msgstr "Prenumerera på ${title}"
 
-#: arche_papergirl/./schemas.py:291
+#: arche_papergirl/./schemas.py:324 arche_papergirl/./schemas.py:339
 msgid "Email addresses, one per row."
 msgstr "Epostadresser, en per rad"
 
-#: arche_papergirl/./schemas.py:297 arche_papergirl/./schemas.py:305
+#: arche_papergirl/./schemas.py:331 arche_papergirl/./schemas.py:348
 #: arche_papergirl/./templates/list_subscribers.pt:23
-#: arche_papergirl/./templates/postoffice.pt:42
+#: arche_papergirl/./templates/postoffice.pt:49
 msgid "Lists"
 msgstr "Listor"
 
-#: arche_papergirl/./schemas.py:322
+#: arche_papergirl/./schemas.py:365
 msgid "Your subscriptions"
 msgstr "Dina prenumerationer"
 
-#: arche_papergirl/./schemas.py:325
+#: arche_papergirl/./schemas.py:368
 msgid "Check any list to unsubscribe from it"
 msgstr "Kryssa för listor för att sluta prenumerera"
 
-#: arche_papergirl/./schemas.py:338
+#: arche_papergirl/./schemas.py:381
 #, python-format
 msgid "Must be one of these types: ${types}"
 msgstr "Måste vara en av dessa typer: ${types}"
 
-#: arche_papergirl/./schemas.py:352
+#: arche_papergirl/./schemas.py:395
 msgid "Populate from this content - make sure it's public!"
 msgstr "Populära från detta - kolla att det är publikt först!"
 
-#: arche_papergirl/./schemas.py:361
+#: arche_papergirl/./schemas.py:404
 msgid "External image url"
 msgstr "Extern bild-url"
 
-#: arche_papergirl/./security.py:22 arche_papergirl/./models/post_office.py:15
+#: arche_papergirl/./security.py:23 arche_papergirl/./models/post_office.py:16
 msgid "Post Office"
 msgstr "Postkontor"
 
@@ -207,11 +207,11 @@ msgstr "Nyhetsbrev"
 msgid "NewsletterSection"
 msgstr "Nyhetsbrevssektion"
 
-#: arche_papergirl/./models/section_populator.py:68
+#: arche_papergirl/./models/section_populator.py:71
 msgid "Local image"
 msgstr "Lokal bild"
 
-#: arche_papergirl/./models/section_populator.py:73
+#: arche_papergirl/./models/section_populator.py:76
 msgid "External image"
 msgstr "Extern bild"
 
@@ -227,10 +227,14 @@ msgstr ""
 "Vi har skickat epost till adressen du angav. Klicka på länken i meddelandet "
 "för att prenumerera."
 
-#: arche_papergirl/./templates/email_list.pt:16
+#: arche_papergirl/./templates/email_list.pt:17
+msgid "Export emails"
+msgstr "Exportera postadresser"
+
+#: arche_papergirl/./templates/email_list.pt:21
 #: arche_papergirl/./templates/email_list_template.pt:22
 #: arche_papergirl/./templates/list_subscriber.pt:24
-#: arche_papergirl/./templates/newsletter.pt:219
+#: arche_papergirl/./templates/newsletter.pt:224
 #: arche_papergirl/./templates/send_details.pt:48
 msgid "Back"
 msgstr "Tillbaka"
@@ -248,8 +252,20 @@ msgid "Loading..."
 msgstr "Laddar…"
 
 #: arche_papergirl/./templates/mail_subscribe.pt:6
-msgid "Subscribe..."
-msgstr "Prenumerera…"
+msgid "Subscribe confirmation"
+msgstr "Bekräfta prenumeration"
+
+#. Default: To start subscribing to to '${list_title}', simply click below to
+#. confirm your email.
+#: arche_papergirl/./templates/mail_subscribe.pt:7
+msgid "confirm_mail_description"
+msgstr ""
+"För att börja prenumerera på '${list_title}', klicka på länken nedan för att "
+"bekräfta din epostadress."
+
+#: arche_papergirl/./templates/mail_subscribe.pt:12
+msgid "Link to start subscription:"
+msgstr "Länk för att starta prenumeration:"
 
 #: arche_papergirl/./templates/newsletter.pt:16
 msgid "Template not found!"
@@ -259,61 +275,61 @@ msgstr "Mall hittas inte!"
 msgid "Subject:"
 msgstr "Ärende:"
 
-#: arche_papergirl/./templates/newsletter.pt:38
-#: arche_papergirl/./templates/newsletter.pt:79
+#: arche_papergirl/./templates/newsletter.pt:40
+#: arche_papergirl/./templates/newsletter.pt:84
 msgid "Edit"
 msgstr "Redigera"
 
-#: arche_papergirl/./templates/newsletter.pt:50
-#: arche_papergirl/./templates/newsletter.pt:91
+#: arche_papergirl/./templates/newsletter.pt:52
+#: arche_papergirl/./templates/newsletter.pt:96
 msgid "Delete"
 msgstr "Radera"
 
-#: arche_papergirl/./templates/newsletter.pt:55
+#: arche_papergirl/./templates/newsletter.pt:57
 msgid "Reset"
 msgstr "Återställ"
 
-#: arche_papergirl/./templates/newsletter.pt:63
+#: arche_papergirl/./templates/newsletter.pt:67
 msgid "No text yet! Populate section with"
 msgstr "Ingen text än! Populära sektionen med"
 
-#: arche_papergirl/./templates/newsletter.pt:100
+#: arche_papergirl/./templates/newsletter.pt:105
 msgid "Size"
 msgstr "Storlek"
 
-#: arche_papergirl/./templates/newsletter.pt:101
+#: arche_papergirl/./templates/newsletter.pt:106
 msgid "Type"
 msgstr "Typ"
 
-#: arche_papergirl/./templates/newsletter.pt:112
+#: arche_papergirl/./templates/newsletter.pt:117
 msgid "Section"
 msgstr "Sektion"
 
-#: arche_papergirl/./templates/newsletter.pt:119
+#: arche_papergirl/./templates/newsletter.pt:124
 msgid "Attachment"
 msgstr "Bifogat"
 
-#: arche_papergirl/./templates/newsletter.pt:126
+#: arche_papergirl/./templates/newsletter.pt:131
 msgid "Status"
 msgstr "Status"
 
-#: arche_papergirl/./templates/newsletter.pt:129
+#: arche_papergirl/./templates/newsletter.pt:134
 msgid "Preview"
 msgstr "Förhandsgranska"
 
-#: arche_papergirl/./templates/newsletter.pt:132
+#: arche_papergirl/./templates/newsletter.pt:137
 msgid "Test"
 msgstr "Test"
 
-#: arche_papergirl/./templates/newsletter.pt:178
+#: arche_papergirl/./templates/newsletter.pt:183
 msgid "Show details"
 msgstr "Visa detaljer"
 
-#: arche_papergirl/./templates/newsletter.pt:188
+#: arche_papergirl/./templates/newsletter.pt:193
 msgid "Approx. template look"
 msgstr "Ungefärligt mallutséende"
 
-#: arche_papergirl/./templates/newsletter.pt:191
+#: arche_papergirl/./templates/newsletter.pt:196
 msgid "Open in new window"
 msgstr "Öppna i nytt fönster"
 
@@ -327,7 +343,7 @@ msgstr "Du prenumererar inte på något"
 
 #: arche_papergirl/./templates/not_subscribing.pt:15
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: arche_papergirl/./templates/postoffice.pt:20
 msgid "Subscribers"
@@ -341,11 +357,15 @@ msgstr "Visa (${count})"
 msgid "Update from list"
 msgstr "Uppdatera från lista"
 
-#: arche_papergirl/./templates/postoffice.pt:58
+#: arche_papergirl/./templates/postoffice.pt:39
+msgid "Scrub emails"
+msgstr "Rensa adresser"
+
+#: arche_papergirl/./templates/postoffice.pt:65
 msgid "Templates"
 msgstr "Mallar"
 
-#: arche_papergirl/./templates/postoffice.pt:74
+#: arche_papergirl/./templates/postoffice.pt:81
 msgid "Latest newsletters"
 msgstr "Senaste nyhetsbrev"
 
@@ -374,7 +394,7 @@ msgstr "I kö (${num})"
 #: arche_papergirl/./views/newsletter.py:96
 #: arche_papergirl/./views/newsletter.py:118
 msgid "(Test list title)"
-msgstr ""
+msgstr "(Testlistans titel)"
 
 #: arche_papergirl/./views/newsletter.py:104
 msgid "Send test email"
@@ -399,12 +419,13 @@ msgstr "Skicka till lista"
 #: arche_papergirl/./views/newsletter.py:151
 msgid "mail_queued_notice"
 msgstr ""
+"La till: ${found_subs} Skippade: ${already_added_subs} (de fanns redan i kön)"
 
 #: arche_papergirl/./views/newsletter.py:205
 msgid "Reset to initial state"
 msgstr "Återställ till ursprungligt stadie"
 
-#: arche_papergirl/./views/post_office.py:57
+#: arche_papergirl/./views/post_office.py:58
 msgid "Update subscribers"
 msgstr "Uppdatera prenumeranter"
 
@@ -417,8 +438,22 @@ msgid "Remove"
 msgstr "Ta bort"
 
 #: arche_papergirl/./views/post_office.py:62
+#: arche_papergirl/./views/post_office.py:112
 msgid "Cancel"
 msgstr "Avbryt"
+
+#: arche_papergirl/./views/post_office.py:109
+msgid "Scrub email addresses"
+msgstr "Renda epostadresser"
+
+#: arche_papergirl/./views/post_office.py:111
+msgid "Process"
+msgstr "Bearbeta"
+
+#: arche_papergirl/./views/post_office.py:135
+#, python-format
+msgid "${passed} and ${removed} removed."
+msgstr "${passed} och ${removed} borttagna."
 
 #: arche_papergirl/./views/subscription.py:42
 msgid "Subscribe"
@@ -433,6 +468,9 @@ msgstr "${title} prenumeration"
 #, python-format
 msgid "All done, you're now subscribing to ${title}"
 msgstr "Klart, du prenumererar nu på ${title}"
+
+#~ msgid "Subscribe..."
+#~ msgstr "Prenumerera…"
 
 #~ msgid "click here"
 #~ msgstr "klicka här"

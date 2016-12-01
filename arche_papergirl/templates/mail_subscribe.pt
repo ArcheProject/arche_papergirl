@@ -3,11 +3,13 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="arche_papergirl">
-<h3 i18n:translate="">Subscribe...</h3>
-<p i18n:translate="xxx">
-
+<h3 i18n:translate="">Subscribe confirmation</h3>
+<p i18n:translate="confirm_mail_description">
+  To start subscribing to to '<tal:ts i18n:name="list_title">${context.title}</tal:ts>',
+  simply click below to confirm your email.
 </p>
 <p>
+  <span i18n:translate="">Link to start subscription:</span>
   <a href="${url}">${url}</a>
 </p>
 <tal:footer replace="structure view.render_template('arche:templates/emails/footer.pt')"></tal:footer>
