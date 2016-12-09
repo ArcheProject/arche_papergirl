@@ -15,6 +15,15 @@ from arche_papergirl.utils import get_po_objs
 from arche_papergirl.utils import render_newsletter
 
 
+def prepare_emails_text_chunk(value):
+    out = ""
+    if value:
+        for row in value.splitlines():
+            if row:
+                out += "%s\n" % row.strip().replace(',', '')
+    return out
+
+
 class AceCodeWidget(deform.widget.Widget):
     template = 'ace'
     readonly_template = 'ace'
@@ -293,6 +302,7 @@ class RequestSubscriptionSchema(colander.Schema):
         colander.String(),
         title = _("Email"),
         validator = NewSubscriberValidator,
+        preparer=prepare_emails_text_chunk,
     )
 
 
@@ -309,22 +319,13 @@ class PostOfficeSchema(colander.Schema):
     )
 
 
-def strip_empty_lines(value):
-    out = ""
-    if value:
-        for row in value.splitlines():
-            if row:
-                out += "%s\n" % row.strip()
-    return out
-
-
 class UpdateListSubscribers(colander.Schema):
     emails = colander.SchemaNode(
         colander.String(),
         title=_("Email addresses, one per row."),
         widget=deform.widget.TextAreaWidget(rows=6),
         validator = multiple_email_validator,
-        preparer = strip_empty_lines,
+        preparer = prepare_emails_text_chunk,
     )
     lists = colander.SchemaNode(
         colander.Set(),
@@ -338,7 +339,7 @@ class ScrubEmailsSchema(colander.Schema):
         colander.String(),
         title=_("Email addresses, one per row."),
         widget=deform.widget.TextAreaWidget(rows=6),
-        preparer = strip_empty_lines,
+        preparer = prepare_emails_text_chunk,
     )
 
 
