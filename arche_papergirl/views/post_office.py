@@ -83,7 +83,7 @@ class UpdateSubscribersForm(BaseForm):
         return _redirect_or_remove(self)
 
     def remove_success(self, appstruct):
-        for email in appstruct['email'].splitlines():
+        for email in appstruct['emails'].splitlines():
             if not email:
                 continue
             subs = self.context.subscribers.email_to_subs(email)
