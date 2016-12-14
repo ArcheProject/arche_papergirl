@@ -20,9 +20,13 @@ def prepare_emails_text_chunk(value):
     if value:
         for row in value.splitlines():
             if row:
-                out += "%s\n" % row.strip().replace(',', '')
+                out += "%s\n" % strip_email(row)
     return out
 
+def strip_email(value):
+    if value:
+        return value.strip().replace(',', '')
+    return ''
 
 class AceCodeWidget(deform.widget.Widget):
     template = 'ace'
@@ -302,7 +306,7 @@ class RequestSubscriptionSchema(colander.Schema):
         colander.String(),
         title = _("Email"),
         validator = NewSubscriberValidator,
-        preparer=prepare_emails_text_chunk,
+        preparer=strip_email,
     )
 
 
