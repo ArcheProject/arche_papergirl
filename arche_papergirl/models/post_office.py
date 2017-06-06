@@ -2,10 +2,12 @@
 from __future__ import unicode_literals
 
 from arche.api import Content
-from arche.api import LocalRolesMixin, ContextACLMixin
+from arche.api import ContextACLMixin
+from arche.api import LocalRolesMixin
 from zope.interface import implementer
 
 from arche_papergirl import _
+from arche_papergirl.interfaces import IEmailList
 from arche_papergirl.interfaces import IPostOffice
 from arche_papergirl.security import PERM_ADD_POST_OFFICE
 
@@ -25,6 +27,12 @@ class PostOffice(Content, LocalRolesMixin, ContextACLMixin):
     @property
     def subscribers(self):
         return self['s']
+
+    def get_email_lists(self):
+        """ Get email lists without checking permission """
+        for obj in self.values():
+            if IEmailList.providedBy(obj):
+                yield obj
 
 
 def includeme(config):
