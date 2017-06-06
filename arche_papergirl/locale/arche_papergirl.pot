@@ -1,20 +1,20 @@
 #
 # SOME DESCRIPTIVE TITLE
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2016-12-01 08:45+0100\n"
+"POT-Creation-Date: 2017-06-06 17:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Lingua 4.11\n"
+"Language: \n"
+"Generated-By: Lingua 4.5.1\n"
 
 #: ./arche_papergirl/./portlets.py:15 ./arche_papergirl/./portlets.py:46
 msgid "Subscribe maillist"
@@ -24,8 +24,8 @@ msgstr ""
 msgid "Select..."
 msgstr ""
 
-#: ./arche_papergirl/./portlets.py:32 ./arche_papergirl/./schemas.py:62
-#: ./arche_papergirl/./schemas.py:302
+#: ./arche_papergirl/./portlets.py:32 ./arche_papergirl/./schemas.py:75
+#: ./arche_papergirl/./schemas.py:316
 msgid "Title"
 msgstr ""
 
@@ -39,139 +39,140 @@ msgstr ""
 
 #. Default: Sender email address - leave empty to use system default:
 #. '${sys_default}'
-#: ./arche_papergirl/./schemas.py:54
+#: ./arche_papergirl/./schemas.py:67
 msgid "sender_email_address"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:63
+#: ./arche_papergirl/./schemas.py:76
 msgid "Used as first heading in the newsletter"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:67
+#: ./arche_papergirl/./schemas.py:80
 msgid "Mail subject line"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:77
+#: ./arche_papergirl/./schemas.py:90
 msgid "Sender name"
 msgstr ""
 
 #. Default: If a custom sender email was specified, you may specify sender name
 #. here.
-#: ./arche_papergirl/./schemas.py:78
+#: ./arche_papergirl/./schemas.py:91
 msgid "sender_name_description"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:85
+#: ./arche_papergirl/./schemas.py:98
 msgid "Pick a layout to use for this letter"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:94
+#: ./arche_papergirl/./schemas.py:107
 msgid "Section title"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:99
+#: ./arche_papergirl/./schemas.py:112
 msgid "Text"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:140 ./arche_papergirl/./schemas.py:260
-#: ./arche_papergirl/./schemas.py:294
+#: ./arche_papergirl/./schemas.py:153 ./arche_papergirl/./schemas.py:273
+#: ./arche_papergirl/./schemas.py:307
 #: ./arche_papergirl/./templates/list_subscribers.pt:20
 msgid "Email"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:143
+#: ./arche_papergirl/./schemas.py:156
 msgid "Test recipients"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:151
+#: ./arche_papergirl/./schemas.py:164
 msgid "Pick lists to send to"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:175
+#: ./arche_papergirl/./schemas.py:188
 #, python-format
 msgid "The ${tag}-tag is required in the template."
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:188
+#: ./arche_papergirl/./schemas.py:201
 msgid "List title"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:192
+#: ./arche_papergirl/./schemas.py:205
 msgid "Allow users to subscribe?"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:209
+#: ./arche_papergirl/./schemas.py:222
 msgid "Template title"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:213 ./arche_papergirl/./schemas.py:306
+#: ./arche_papergirl/./schemas.py:226 ./arche_papergirl/./schemas.py:320
 msgid "Description"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:214
+#: ./arche_papergirl/./schemas.py:227
 msgid "For internal use"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:220
+#: ./arche_papergirl/./schemas.py:233
 #: ./arche_papergirl/./templates/newsletter.pt:11
 msgid "Mail template"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:230
+#: ./arche_papergirl/./schemas.py:243
 msgid "Include style sheets"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:235
+#: ./arche_papergirl/./schemas.py:248
 msgid "Use Premailer inliner"
 msgstr ""
 
 #. Default: This address is already used.
-#: ./arche_papergirl/./schemas.py:253
+#: ./arche_papergirl/./schemas.py:266
 msgid "already_used_email_error"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:279
+#: ./arche_papergirl/./schemas.py:292
 msgid "Already subscribing"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:286
+#: ./arche_papergirl/./schemas.py:299
 #, python-format
 msgid "Subscribe to ${title}"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:324 ./arche_papergirl/./schemas.py:339
+#: ./arche_papergirl/./schemas.py:329 ./arche_papergirl/./schemas.py:344
 msgid "Email addresses, one per row."
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:331 ./arche_papergirl/./schemas.py:348
+#: ./arche_papergirl/./schemas.py:336 ./arche_papergirl/./schemas.py:353
 #: ./arche_papergirl/./templates/list_subscribers.pt:23
 #: ./arche_papergirl/./templates/postoffice.pt:49
 msgid "Lists"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:365
+#: ./arche_papergirl/./schemas.py:370
+#: ./arche_papergirl/./plugins/subscribe_on_profile.py:74
 msgid "Your subscriptions"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:368
+#: ./arche_papergirl/./schemas.py:373
 msgid "Check any list to unsubscribe from it"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:381
+#: ./arche_papergirl/./schemas.py:386
 #, python-format
 msgid "Must be one of these types: ${types}"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:395
+#: ./arche_papergirl/./schemas.py:400
 msgid "Populate from this content - make sure it's public!"
 msgstr ""
 
-#: ./arche_papergirl/./schemas.py:404
+#: ./arche_papergirl/./schemas.py:409
 msgid "External image url"
 msgstr ""
 
 #: ./arche_papergirl/./security.py:23
-#: ./arche_papergirl/./models/post_office.py:16
+#: ./arche_papergirl/./models/post_office.py:18
 msgid "Post Office"
 msgstr ""
 
@@ -210,6 +211,16 @@ msgstr ""
 
 #: ./arche_papergirl/./models/section_populator.py:76
 msgid "External image"
+msgstr ""
+
+#: ./arche_papergirl/./plugins/subscribe_on_profile.py:72
+msgid "Do you want to Subscribe to email lists?"
+msgstr ""
+
+#. Default: Show this list as a subscription option when a user registers or
+#. edits their profile?
+#: ./arche_papergirl/./plugins/subscribe_on_profile.py:89
+msgid "subscribe_on_profile_title"
 msgstr ""
 
 #: ./arche_papergirl/./templates/confirm_subscription.pt:10

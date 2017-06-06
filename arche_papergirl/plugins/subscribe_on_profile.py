@@ -86,7 +86,9 @@ def _list_option_for_profile(schema, event):
     schema.add(colander.SchemaNode(
         colander.Bool(),
         name='subscribe_on_profile',
-        title=_("Show this list as a subscription option when a user registers or edits their profile?"),
+        title=_('subscribe_on_profile_title',
+                default="Show this list as a subscription option when a user registers "
+                        "or edits their profile?"),
     ))
 
 
