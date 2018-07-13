@@ -8,6 +8,7 @@ from arche.security import PERM_EDIT
 from arche.views.file import AddFileForm
 from arche.views.base import BaseForm
 from arche.views.base import BaseView
+from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
@@ -106,7 +107,7 @@ class SendTestSubForm(BaseForm):
     #Important - make sure button names are unique since all forms will execute otherwise
     buttons = (deform.Button('send_test', title = _("Send")),)
 
-    @property
+    @reify
     def form_options(self):
         options = super(SendTestSubForm, self).form_options
         options['action'] = self.request.resource_url(self.context, anchor='test_tab')

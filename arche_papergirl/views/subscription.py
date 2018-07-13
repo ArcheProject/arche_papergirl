@@ -7,6 +7,7 @@ from arche.interfaces import IRoot
 from arche.security import NO_PERMISSION_REQUIRED
 from arche.views.base import BaseForm
 from arche.views.base import BaseView
+from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPNotFound
@@ -54,7 +55,7 @@ class RequestSubscriptionForm(BaseForm):
             return super(RequestSubscriptionForm, self).__call__()
         raise HTTPForbidden("Self-subscription not allowed")
 
-    @property
+    @reify
     def form_options(self):
         form_options = super(RequestSubscriptionForm, self).form_options
         form_options['action'] = self.request.resource_url(self.context, 'request')
